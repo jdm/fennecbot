@@ -86,6 +86,10 @@ function findIssue(from, to, search) {
 }
 
 bot.addListener("message", function(from, to, message) {
+  if (from == 'ghservo') {
+    return;
+  }
+
   var numbers = /#([\d]+)/.exec(message);
   if (numbers) {
     searchGithub("/" + numbers[1], function(error, issue) {
