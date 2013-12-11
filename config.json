@@ -1,5 +1,5 @@
 {
-	"channels": ["#lolzl"],
+	"channels": ["#servo"],
 	"server": "irc.mozilla.org",
 	"botName": "crowbot",
 	"port": "6697",

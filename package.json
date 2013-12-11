@@ -6,7 +6,7 @@
     "url": "https://github.com/leibovic/fennecbot"
   },
   "dependencies": {
-    "bz": "*",
+    "request": "*",
     "irc" : "*"
   },
   "engines": {
