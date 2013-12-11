@@ -1,7 +1,7 @@
 {
-	"channels": ["#mobile"],
+	"channels": ["#lolzl"],
 	"server": "irc.mozilla.org",
-	"botName": "fennecbot",
+	"botName": "crowbot",
 	"port": "6697",
 	"secure": "true"
 }

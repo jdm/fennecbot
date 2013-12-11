@@ -1,0 +1,5 @@
+mem: 128M
+name: crowbot
+command: node server.js
+processes:
+  web: ~
