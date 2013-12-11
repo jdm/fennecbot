@@ -80,7 +80,7 @@ function findIssue(from, to, search) {
     var issue = issues[index];
     console.log(bot.nick + " found issue " + issue.num);
 
-    var message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " " + issue.html_url;
+    var message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
     bot.say(to, message);
   });
 }
