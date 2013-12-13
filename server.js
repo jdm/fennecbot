@@ -90,7 +90,7 @@ bot.addListener("message", function(from, to, message) {
     return;
   }
 
-  var numbers = /#([\d]+)/.exec(message);
+  var numbers = /(issue |\s|\s#|^#)([\d]+)/.exec(message);
   if (numbers) {
     searchGithub("/" + numbers[1], function(error, issue) {
       if (error) {
@@ -102,11 +102,16 @@ bot.addListener("message", function(from, to, message) {
     });
   }
 
-  if (message.indexOf('w3.org') > -1 &&
-      message.indexOf('CSS21') == -1 &&
-      message.indexOf('csswg') == -1) {
-    bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/mozilla/servo/wiki/Relevant-spec-links .");
-    return;
+  if (message.indexOf('w3.org') > -1) {
+    var allowed = ['CSS21', 'csswg', 'PNG'];
+    var found = false;
+    for (var i = 0; i < allowed.length; i++) {
+      found = found || (message.indexOf(allowed[i]) > -1);
+    }
+    if (!found) {
+      bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/mozilla/servo/wiki/Relevant-spec-links .");
+      return;
+    }
   }
 
   if (message.indexOf(bot.nick) !== 0) {
