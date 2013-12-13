@@ -92,7 +92,7 @@ bot.addListener("message", function(from, to, message) {
 
   var numbers = /(issue |\s|\s#|^#)([\d]+)/.exec(message);
   if (numbers) {
-    searchGithub("/" + numbers[1], function(error, issue) {
+    searchGithub("/" + numbers[2], function(error, issue) {
       if (error) {
         console.log(error);
         return;
