@@ -18,9 +18,9 @@ var milestones = {
   'acid2': 4
 };
 
-function searchGithub(params, callback) {
+function searchGithub(params, org, repo, callback) {
   var reqParams = {
-    uri: 'https://api.github.com/repos/mozilla/servo/issues' + params,
+    uri: 'https://api.github.com/repos/' + org + '/' + repo + '/issues' + params,
     method: 'GET',
     body: null,
     headers: {
@@ -69,7 +69,7 @@ function choose(list) {
 
 // Finds an issue that matches the search term, and says it to the person who asked about it.
 function findIssue(from, to, search) {
-  searchGithub(search, function(error, issues) {
+  searchGithub(search, 'mozilla', 'servo', function(error, issues) {
     if (error) {
       console.log(error);
       return;
@@ -90,9 +90,28 @@ bot.addListener("message", function(from, to, message) {
     return;
   }
 
-  var numbers = /(issue\s|\s#)([\d]+)/.exec(message);
-  if (numbers) {
-    searchGithub("/" + numbers[2], function(error, issue) {
+  // watch for:
+  // issue 123
+  // " #123" to avoid catching html anchors
+  // "#123" at the start of a line
+  var numbers_re = /(issue\s|\s#|^#)([\d]+)/;
+  var numbers;
+  while ((numbers = numbers_re.exec(message)) !== null) {
+    searchGithub("/" + numbers[2], 'mozilla', 'servo', function(error, issue) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      var message = 'Issue #' + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
+      bot.say(to, message);
+    });
+  }
+
+  // watch for github issue links to any repository
+  var issues_re = /https:\/\/github.com\/(\w+)\/(\w+)\/issues\/(\d)+/;
+  var issues;
+  while ((issues = issues_re.exec(message)) !== null) {
+    searchGithub("/" + issues[3], issues[1], issues[2], function(error, issue) {
       if (error) {
         console.log(error);
         return;
@@ -109,9 +128,20 @@ bot.addListener("message", function(from, to, message) {
       found = found || (message.indexOf(allowed[i]) > -1);
     }
     if (!found) {
-      bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/mozilla/servo/wiki/Relevant-spec-links .");
+      bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/mozilla/servo/wiki/Relevant-spec-links");
       return;
     }
+  }
+
+  if (["shut up crowbot", "crowbot: shut up", "shut up, crowbot"].indexOf(message.toLowerCase()) > -1) {
+    var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit"];
+    var reply = replies[choose(replies)];
+    if (reply.indexOf('/me ') == 0) {
+      bot.action(to, reply.substring(4));
+    } else {
+      bot.say(to, reply);
+    }
+    return;
   }
 
   if (message.indexOf(bot.nick) !== 0) {
