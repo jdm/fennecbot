@@ -94,7 +94,7 @@ bot.addListener("message", function(from, to, message) {
   // issue 123
   // " #123" to avoid catching html anchors
   // "#123" at the start of a line
-  var numbers_re = /(issue\s|\s#|^#)([\d]+)/;
+  var numbers_re = /(issue\s|\s#|^#)([\d]+)/g;
   var numbers;
   while ((numbers = numbers_re.exec(message)) !== null) {
     searchGithub("/" + numbers[2], 'mozilla', 'servo', function(error, issue) {
@@ -108,7 +108,7 @@ bot.addListener("message", function(from, to, message) {
   }
 
   // watch for github issue links to any repository
-  var issues_re = /https:\/\/github.com\/(\w+)\/(\w+)\/issues\/(\d)+/;
+  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/(\d+)/g;
   var issues;
   while ((issues = issues_re.exec(message)) !== null) {
     searchGithub("/" + issues[3], issues[1], issues[2], function(error, issue) {
@@ -133,8 +133,12 @@ bot.addListener("message", function(from, to, message) {
     }
   }
 
-  if (["shut up crowbot", "crowbot: shut up", "shut up, crowbot"].indexOf(message.toLowerCase()) > -1) {
-    var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit"];
+  var angry_msgs = ["shut up crowbot",
+                    "shut up, crowbot",
+                    "crowbot: shut up",
+                    "kicks crowbot"];
+  if (angry_msgs.indexOf(message.toLowerCase()) > -1) {
+    var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
     var reply = replies[choose(replies)];
     if (reply.indexOf('/me ') == 0) {
       bot.action(to, reply.substring(4));
