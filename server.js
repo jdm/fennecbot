@@ -122,7 +122,7 @@ bot.addListener("message", function(from, to, message) {
   }
 
   if (message.indexOf('w3.org/TR') > -1) {
-    var allowed = ['w3.org/TR/CSS2', 'PNG'];
+    var allowed = ['PNG'];
     var found = false;
     for (var i = 0; i < allowed.length; i++) {
       found = found || (message.indexOf(allowed[i]) > -1);
