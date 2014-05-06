@@ -210,7 +210,7 @@ bot.addListener("message", function(from, to, message) {
     }
     return;
   }
-  if (message.indexOf('ping ') > -1) {
+  if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
     try {
       var command = message.match(/(ping)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
       pingee = command[1].toLowerCase();
