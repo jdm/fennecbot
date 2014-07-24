@@ -70,7 +70,7 @@ function choose(list) {
 
 // Finds an issue that matches the search term, and says it to the person who asked about it.
 function findIssue(from, to, search) {
-  searchGithub(search, 'mozilla', 'servo', function(error, issues) {
+  searchGithub(search, 'servo', 'servo', function(error, issues) {
     if (error) {
       console.log(error);
       return;
@@ -114,7 +114,7 @@ bot.addListener("message", function(from, to, message) {
   var numbers_re = /(issue\s|\s#|^#)([\d]+)/g;
   var numbers;
   while ((numbers = numbers_re.exec(message)) !== null) {
-    searchGithub("/" + numbers[2], 'mozilla', 'servo', function(error, issue) {
+    searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
       if (error) {
         console.log(error);
         return;
@@ -125,7 +125,7 @@ bot.addListener("message", function(from, to, message) {
   }
 
   // watch for github issue links to any repository
-  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/(\d+)/g;
+  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issue|pull)\/(\d+)/g;
   var issues;
   while ((issues = issues_re.exec(message)) !== null) {
     searchGithub("/" + issues[3], issues[1], issues[2], function(error, issue) {
@@ -145,7 +145,7 @@ bot.addListener("message", function(from, to, message) {
       found = found || (message.indexOf(allowed[i]) > -1);
     }
     if (!found) {
-      bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/mozilla/servo/wiki/Relevant-spec-links");
+      bot.say(to, from + ": that's probably not the spec you want. Please read https://github.com/servo/servo/wiki/Relevant-spec-links");
       return;
     }
   }
@@ -180,7 +180,7 @@ bot.addListener("message", function(from, to, message) {
   }
 
   if (message.indexOf("help") > -1) {
-    bot.say(to, from + ": Try looking at our wiki: https://github.com/mozilla/servo/blob/master/CONTRIBUTING.md");
+    bot.say(to, from + ": Try looking at our wiki: https://github.com/servo/servo/blob/master/CONTRIBUTING.md");
     return;
   }
 
@@ -191,7 +191,7 @@ bot.addListener("message", function(from, to, message) {
   }
 
   if (message.indexOf("build") > -1) {
-    bot.say(to, from + ": Try looking at our readme: https://github.com/mozilla/servo/#prerequisites");
+    bot.say(to, from + ": Try looking at our readme: https://github.com/servo/servo/#prerequisites");
     return;
   }
 
