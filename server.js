@@ -125,10 +125,10 @@ bot.addListener("message", function(from, to, message) {
   }
 
   // watch for github issue links to any repository
-  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issue|pull)\/(\d+)/g;
+  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issues|pull)\/(\d+)/g;
   var issues;
   while ((issues = issues_re.exec(message)) !== null) {
-    searchGithub("/" + issues[3], issues[1], issues[2], function(error, issue) {
+    searchGithub("/" + issues[4], issues[1], issues[2], function(error, issue) {
       if (error) {
         console.log(error);
         return;
