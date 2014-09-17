@@ -212,7 +212,7 @@ bot.addListener("message", function(from, to, message) {
   }
   if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
     try {
-      var command = message.match(/(ping)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
+      var command = message.match(/(ping|tell)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
       pingee = command[1].toLowerCase();
       if (!pings[pingee]) {
         pings[pingee] = [];
