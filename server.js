@@ -1,6 +1,7 @@
 var irc = require("irc"),
     https = require("https"),
     request = require("request"),
+    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
     notes = require("./notes"),
     config = require("./config");
 
@@ -68,6 +69,36 @@ function choose(list) {
   return Math.floor(Math.random() * list.length);
 }
 
+function searchCritic(from, to, review_num) {
+  var oReq = new XMLHttpRequest();
+  var uri = 'https://critic.hoppipolla.co.uk/r/' + review_num;
+  console.log(uri);
+
+  var pull_url_num = /'(https:\/\/github.com\/servo\/servo\/pull\/([\d]+))'/g;
+  oReq.onload = function () {
+  console.log(this.responseText);
+
+  text = this.responseText;
+  while((pull_url = pull_url_num.exec(text)) !== null) {
+        console.log(pull_url[2]);
+
+   var message;
+   searchGithub("/" + pull_url[2], 'servo', 'servo', function(error, issue) {
+    if (error) {
+      console.log(error);
+      return;
+    }
+    message = 'Issue #' + issue.number + ': ' + issue.title + ' - ' + issue.html_url + " , " + uri;
+    bot.say(to, message);
+    });
+  }
+}
+
+  oReq.open("get", uri, true);
+  oReq.send();
+}
+
+
 // Finds an issue that matches the search term, and says it to the person who asked about it.
 function findIssue(from, to, search) {
   searchGithub(search, 'servo', 'servo', function(error, issues) {
@@ -111,9 +142,10 @@ bot.addListener("message", function(from, to, message) {
   // issue 123
   // " #123" to avoid catching html anchors
   // "#123" at the start of a line
-  var numbers_re = /(issue\s|\s#|^#)([\d]+)/g;
+  var numbers_re = /(issue|[^r]\s#|^#)([\d]+)/g;
   var numbers;
   while ((numbers = numbers_re.exec(message)) !== null) {
+
     searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
       if (error) {
         console.log(error);
@@ -122,6 +154,22 @@ bot.addListener("message", function(from, to, message) {
       var message = 'Issue #' + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
       bot.say(to, message);
     });
+  }
+
+  var review_num = /((r|re|review)\s#?)([\d]+)/g;
+  var review;
+  while((review = review_num.exec(message)) !== null) {
+
+   searchCritic(from, to, review[3]);
+  }
+
+
+  var not_crit = /https:\/\/critic.hoppipolla.co.uk\/r\/([\d]+)/g;
+  var crit_num;
+
+  while((crit_num = not_crit.exec(message)) !== null) {
+    console.log(crit_num);
+    searchCritic(from, to, crit_num[1]);
   }
 
   // watch for github issue links to any repository
@@ -168,7 +216,7 @@ bot.addListener("message", function(from, to, message) {
   if (message.indexOf(bot.nick) !== 0) {
     return;
   }
-  
+
   if (message.indexOf("acid2 bug") > -1) {
     findIssue(from, to, "?milestone=" + milestones['acid2'] + '&asignee=none');
     return;
