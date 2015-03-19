@@ -133,7 +133,8 @@ bot.addListener("message", function(from, to, message) {
         console.log(error);
         return;
       }
-      var message = 'Issue #' + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
+      var message = (issues[3] == 'pull' ? 'PR #' : 'Issue #') + issue.number +
+                    ': ' + issue.title + ' - ' + issue.html_url;
       bot.say(to, message);
     });
   }
