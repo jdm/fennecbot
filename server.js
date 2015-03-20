@@ -14,6 +14,10 @@ var bot = new irc.Client(config.server, config.botName, {
   secure: config.secure
 });
 
+bot.addListener('error', function(message) {
+    console.log('error: ', message);
+});
+
 var milestones = {
   'acid2': 4
 };
