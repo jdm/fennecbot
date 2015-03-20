@@ -102,7 +102,7 @@ bot.addListener("join",function(channel,who){
   }
 });
 
-bot.addListener("message", function(from, to, message) {
+function handler(from, to, message) {
   if (from == 'ghservo') {
     return;
   }
@@ -111,7 +111,7 @@ bot.addListener("message", function(from, to, message) {
   // issue 123
   // " #123" to avoid catching html anchors
   // "#123" at the start of a line
-  var numbers_re = /(issue\s|\s#|^#)([\d]+)/g;
+  var numbers_re = /(issue\s|\s#|^#)(\d[\d]+)/g;
   var numbers;
   while ((numbers = numbers_re.exec(message)) !== null) {
     searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
@@ -154,7 +154,8 @@ bot.addListener("message", function(from, to, message) {
   var angry_msgs = ["shut up crowbot",
                     "shut up, crowbot",
                     "crowbot: shut up",
-                    "kicks crowbot"];
+                    "kicks crowbot",
+                    "whacks crowbot"];
   if (angry_msgs.indexOf(message.toLowerCase()) > -1) {
     var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
     var reply = replies[choose(replies)];
@@ -167,6 +168,57 @@ bot.addListener("message", function(from, to, message) {
   }
 
   if (message.indexOf(bot.nick) !== 0) {
+    return;
+  }
+
+  if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
+    try {
+      var command = message.match(/(ping|tell)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
+      pingee = command[1].toLowerCase();
+      if (!pings[pingee]) {
+        pings[pingee] = [];
+      }
+      pings[pingee].push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+    } catch(e) {
+      bot.say(to,"Please specify a nick and a message")
+    }
+    return;
+  }
+
+  if (message.toLowerCase().indexOf("what should i work on") > -1) {
+    request('https://platform.html5.org/', function(err, response, body) {
+      if (err || !body) {
+        var choices = ["*shrug*", "meh", "dunno", "how should i know?"];
+        bot.say(to, from + ": " + choices[choose(choices)]);
+      } else {
+        var pattern = /<dd><a href="(.*)">(.*)<\/a>/g;
+        var techs = [];
+        var tech;
+        while ((tech = pattern.exec(body)) !== null) {
+          techs.push(tech);
+        }
+        var tech = techs[choose(techs)];
+        var choices = ["why not implement ${tech}?",
+                       "you should write some tests for ${tech}",
+                       "file some new E-easy issues about ${tech}",
+                       "document some unloved code for ${tech}",
+                       "figure out why the tests for ${tech} are failing",
+                       "go read the spec for ${tech}",
+                       "make ${tech} execute in parallel",
+                       "write a better spec for ${tech}",
+                       "rewrite ${tech} in go",
+                       "find a victim to own the ${tech} implementation",
+                       "extract ${tech} into an independent crate",
+                       "figure out why ${tech} regressed",
+                       "add windows support for ${tech}",
+                       "take a break and refrain from thinking about ${tech}",
+                       "rewrite gecko's ${tech} in rust",
+                       "profile the implementation of ${tech}",
+                       "remove all unsafe code from ${tech}"];
+        var saying = choices[choose(choices)];
+        bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + tech[1] + ')');
+      }
+    });
     return;
   }
   
@@ -202,7 +254,8 @@ bot.addListener("message", function(from, to, message) {
   }
 
   if (message.indexOf('botsnack') > -1) {
-    var replies = ["/me beams", "yum!", ":)"];
+    var replies = ["/me beams", "yum!", ":)", "om nom nom", "/me wags its tail", ":D",
+                   "*crunch chrunch*", "^_^"];
     var reply = replies[choose(replies)];
     if (reply.indexOf('/me ') == 0) {
       bot.action(to, reply.substring(4));
@@ -211,17 +264,7 @@ bot.addListener("message", function(from, to, message) {
     }
     return;
   }
-  if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
-    try {
-      var command = message.match(/(ping|tell)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
-      pingee = command[1].toLowerCase();
-      if (!pings[pingee]) {
-        pings[pingee] = [];
-      }
-      pings[pingee].push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
-    } catch(e) {
-      bot.say(to,"Please specify a nick and a message")
-    }
-    return;
-  }
-});
+}
+
+bot.addListener("message", handler);
+bot.addListener("action", handler);
