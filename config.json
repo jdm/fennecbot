@@ -1,7 +1,7 @@
 {
-	"channels": ["#crowbot"],
+	"channels": ["#servo"],
 	"server": "irc.mozilla.org",
-	"botName": "crowbot-test",
+	"botName": "crowbot",
 	"port": "6697",
 	"secure": "true"
 }
