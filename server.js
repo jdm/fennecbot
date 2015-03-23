@@ -33,6 +33,9 @@ function searchGithub(params, org, repo, callback) {
       'User-Agent': 'crowbot v0.1 (not like Gecko)'
     }
   };
+  if ('GITHUB_AUTH' in process.env) {
+    reqParams.headers['Authorization'] = 'Basic ' + new Buffer(process.env.GITHUB_AUTH).toString('base64');
+  }
   console.log(reqParams.uri);
   request(reqParams, function(err, response, body) {
     var error, json;
