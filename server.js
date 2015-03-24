@@ -135,12 +135,13 @@ function handler(from, to, message) {
   var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issues|pull)\/(\d+)/g;
   var issues;
   while ((issues = issues_re.exec(message)) !== null) {
+    var type = issues[3];
     searchGithub("/" + issues[4], issues[1], issues[2], function(error, issue) {
       if (error) {
         console.log(error);
         return;
       }
-      var message = (issues[3] == 'pull' ? 'PR #' : 'Issue #') + issue.number +
+      var message = (type == 'pull' ? 'PR #' : 'Issue #') + issue.number +
                     ': ' + issue.title + ' - ' + issue.html_url;
       bot.say(to, message);
     });
