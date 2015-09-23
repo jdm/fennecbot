@@ -133,7 +133,7 @@ function handler(from, to, message) {
 
   // watch for github issue links to any repository
   var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issues|pull)\/(\d+)/g;
-  var reviewable_re = /https:\/\/reviewable\.io\/reviews\/([\w\-]+)\/([\w\-]+)\/(\d+)/g;
+  var reviewable_re = /https:\/\/reviewable\.io\/reviews\/([\w\-]+)\/([\w\-]+)(\/)(\d+)/g;
   var issues;
   while ((issues = (issues_re.exec(message) || reviewable_re.exec(message) )) !== null) {
     var type = issues[3];
