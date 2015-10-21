@@ -110,7 +110,7 @@ bot.addListener("join",function(channel,who){
 });
 
 function handler(from, to, message) {
-  if (from == 'ghservo') {
+  if (from == 'ghservo' || from.match(/crowbot/)) {
     return;
   }
 
