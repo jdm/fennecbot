@@ -86,9 +86,14 @@ function findIssue(from, to, search) {
     // Find a random bug from the array.
     var index = choose(issues);
     var issue = issues[index];
-    console.log(bot.nick + " found issue " + issue.num);
+    var message;
+    if (issue) {
+      console.log(bot.nick + " found issue " + issue.num);
 
-    var message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
+      message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
+    } else {
+      message = from + ": couldn't find anything!";
+    }
     bot.say(to, message);
   });
 }
@@ -191,6 +196,12 @@ function handler(from, to, message) {
       bot.say(to,"Please specify a nick and a message")
     }
     return;
+  }
+
+  review_match = message.toLowerCase().match(/what should (.*) review/);
+  if (review_match) {
+    var reviewer = review_match[1] == "i" ? from : review_match[1];
+    findIssue(from, to, "?labels=S-awaiting-review&assignee=" + reviewer)
   }
 
   if (message.toLowerCase().indexOf("what should i work on") > -1) {
