@@ -283,6 +283,20 @@ function handler(from, to, message) {
     }
     return;
   }
+
+  if (message.indexOf('what prs need a reviewer') > -1) {
+    searchGithub('?assignee=none&labels=S-awaiting-review', 'servo', 'servo', function(error, issues) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      issues.forEach(function(issue) {
+        bot.say(to, issue.title + ': ' + issue.url);
+      });
+    });
+    return;
+  }
 }
 
 bot.addListener("message", handler);
