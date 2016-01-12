@@ -3,5 +3,6 @@
 	"server": "irc.mozilla.org",
 	"botName": "crowbot",
 	"port": "6697",
-	"secure": "true"
+	"secure": "true",
+    	"autoRejoin": "true"
 }

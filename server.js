@@ -11,7 +11,8 @@ if (module.parent) {
 var bot = new irc.Client(config.server, config.botName, {
   channels: config.channels,
   port: config.port,
-  secure: config.secure
+  secure: config.secure,
+  autoRejoin: config.autoRejoin,
 });
 
 bot.addListener('error', function(message) {
