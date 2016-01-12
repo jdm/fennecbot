@@ -292,8 +292,10 @@ function handler(from, to, message) {
         return;
       }
 
-      issues.forEach(function(issue) {
-        bot.say(to, issue.title + ': ' + issue.url);
+      issues.forEach(function(issue, index) {
+        setTimeout(function() {
+          bot.say(to, issue.title + ': ' + issue.html_url);
+        }, 650 * (index + 1));
       });
     });
     return;
