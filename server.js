@@ -119,6 +119,8 @@ function handler(from, to, message) {
   if (from == 'ghservo' || from.match(/crowbot/)) {
     return;
   }
+  // Caseless message matching
+  message = message.toLowerCase();
 
   // watch for:
   // issue 123
@@ -171,7 +173,7 @@ function handler(from, to, message) {
                     "crowbot: shut up",
                     "kicks crowbot",
                     "whacks crowbot"];
-  if (angry_msgs.indexOf(message.toLowerCase()) > -1) {
+  if (angry_msgs.indexOf(message) > -1) {
     var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
     var reply = replies[choose(replies)];
     if (reply.indexOf('/me ') == 0) {
@@ -200,13 +202,13 @@ function handler(from, to, message) {
     return;
   }
 
-  review_match = message.toLowerCase().match(/what should (.*) review/);
+  review_match = message.match(/what should (.*) review/);
   if (review_match) {
     var reviewer = review_match[1] == "i" ? from : review_match[1];
     findIssue(from, to, "?labels=S-awaiting-review&assignee=" + reviewer)
   }
 
-  if (message.toLowerCase().indexOf("what should i work on") > -1) {
+  if (message.indexOf("what should i work on") > -1) {
     request('https://platform.html5.org/', function(err, response, body) {
       if (err || !body) {
         var choices = ["*shrug*", "meh", "dunno", "how should i know?"];
