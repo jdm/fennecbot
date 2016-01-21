@@ -165,11 +165,11 @@ function handler(from, to, message) {
     }
   }
 
-  var angry_msgs = ["shut up crowbot",
-                    "shut up, crowbot",
-                    "crowbot: shut up",
-                    "kicks crowbot",
-                    "whacks crowbot"];
+  var angry_msgs = ["shut up " + bot.nick,
+                    "shut up, " + bot.nick,
+                    bot.nick + ": shut up",
+                    "kicks " + bot.nick,
+                    "whacks " + bot.nick];
   if (angry_msgs.indexOf(message) > -1) {
     var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
     var reply = replies[choose(replies)];
