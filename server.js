@@ -86,7 +86,7 @@ function findIssue(from, to, search) {
     var issue = issues[index];
     var message;
     if (issue) {
-      console.log(bot.nick + " found issue " + issue.num);
+      console.log(bot.nick + " found issue " + issue.number);
 
       message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
     } else {
