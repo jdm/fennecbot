@@ -19,9 +19,6 @@ bot.addListener('error', function(message) {
     console.log('error: ', message);
 });
 
-var milestones = {
-  'acid2': 4
-};
 var pings={};
 
 function searchGithub(params, org, repo, callback) {
@@ -245,11 +242,6 @@ function handler(from, to, message) {
     return;
   }
   
-  if (message.indexOf("acid2 bug") > -1) {
-    findIssue(from, to, "?milestone=" + milestones['acid2'] + '&asignee=none');
-    return;
-  }
-
   if (message.indexOf("easy bug") > -1) {
     findIssue(from, to, "?labels=E-Easy");
     return;
