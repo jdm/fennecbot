@@ -193,6 +193,14 @@ function handler(from, to, message) {
         pings[pingee] = [];
       }
       pings[pingee].push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+      var choices = ["you got it!",
+                     "you bet!",
+                     "ok!",
+                     "ok, but I won't enjoy it :(",
+                     "*sigh*",
+                     "ok, but just this once.",
+                     "all this computing power, and I'm being used as a glorified telephone."];
+      bot.say(to, choices[choose(choices)]);
     } catch(e) {
       bot.say(to,"Please specify a nick and a message")
     }
