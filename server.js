@@ -242,8 +242,7 @@ function handler(from, to, message) {
                        "take a break and refrain from thinking about ${tech}",
                        "rewrite gecko's ${tech} in rust",
                        "profile the implementation of ${tech}",
-                       "remove all unsafe code from ${tech}",
-                       "file an easy bug related to ${tech}"];
+                       "remove all unsafe code from ${tech}"];
         var saying = choices[choose(choices)];
         bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + tech[1] + ')');
       }
