@@ -113,7 +113,7 @@ bot.addListener("join",function(channel,who){
 });
 
 function handler(from, to, message) {
-  if (from == 'ghservo' || from.match(/crowbot/)) {
+  if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/)) {
     return;
   }
   // Caseless message matching
