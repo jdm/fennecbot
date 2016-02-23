@@ -153,7 +153,7 @@ function handler(from, to, message) {
     });
   }
 
-  if (message.indexOf('w3.org/TR') > -1) {
+  if (message.indexOf('w3.org/tr') > -1) {
     var allowed = ['PNG'];
     var found = false;
     for (var i = 0; i < allowed.length; i++) {
