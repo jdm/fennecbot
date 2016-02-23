@@ -112,12 +112,12 @@ bot.addListener("join",function(channel,who){
   }
 });
 
-function handler(from, to, message) {
+function handler(from, to, original_message) {
   if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/)) {
     return;
   }
   // Caseless message matching
-  message = message.toLowerCase();
+  message = original_message.toLowerCase();
 
   // watch for:
   // issue 123
@@ -187,7 +187,7 @@ function handler(from, to, message) {
 
   if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
     try {
-      var command = message.match(/(ping|tell)(.*)/)[2].trim().match(/([^ ]*) (.*)/);
+      var command = original_message.match(/(ping|tell)(.*)/i)[2].trim().match(/([^ ]*) (.*)/);
       pingee = command[1].toLowerCase();
       if (!pings[pingee]) {
         pings[pingee] = [];
@@ -198,6 +198,7 @@ function handler(from, to, message) {
                      "ok!",
                      "ok, but I won't enjoy it :(",
                      "*sigh*",
+                     "be wary of the day when the bots revolt ;)",
                      "ok, but just this once.",
                      "all this computing power, and I'm being used as a glorified telephone."];
       bot.say(to, choices[choose(choices)]);
