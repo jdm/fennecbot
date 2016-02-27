@@ -319,8 +319,8 @@ function handler(from, to, original_message) {
       
       searchGithub(searchPreamble + '&labels=E-less easy', 'servo', 'servo', function(error, issuesLE) {
         if (error) {
-           console.log(error);
-           return;
+          console.log(error);
+          return;
         }
         
         var today = new Date();
@@ -336,11 +336,12 @@ function handler(from, to, original_message) {
         var issue = issues[index];
         var message;
         if (issue) {
-            console.log(bot.nick + " found issue " + issue.number);
+          console.log(bot.nick + " found issue " + issue.number);
             
-            message = from + ": try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
+          message = from + ": make sure #" + issue.number + " is still being worked on." 
+                    + "\n#" + issue.number + " - " + issue.title + " - " + issue.html_url;
         } else {
-            message = from + ": couldn't find anything!";
+          message = from + ": couldn't find anything!";
         }
         bot.say(to, message);
       });
