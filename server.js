@@ -304,6 +304,50 @@ function handler(from, to, original_message) {
     });
     return;
   }
+  
+  if (message.indexOf('what issue should i poke') > -1) {
+    // github API has the key since, but this unfortunately does the opposite than what is needed
+    // what follows "hopes" that in the returned results there is some issue that was last updated
+    // at most 14 days before the call...
+    var searchPreamble = '?assignee=none&sort=updated&direction=desc&labels=C-assigned'; 
+    
+    searchGithub(searchPreamble + '&labels=E-easy', 'servo', 'servo', function(error, issuesE) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      
+      searchGithub(searchPreamble + '&labels=E-less easy', 'servo', 'servo', function(error, issuesLE) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        
+        var today = new Date();
+        var lastUpdated = function(issue) { 
+          var updated_at = new Date(issue.updated_at);
+          var ms = today - updated_at;
+          var days = Math.round(ms / 86400000);
+          return days >= 14;
+        };
+         
+        var issues = issuesE.concat(issuesLE).filter(lastUpdated);
+        var index = choose(issues);
+        var issue = issues[index];
+        var message;
+        if (issue) {
+          console.log(bot.nick + " found issue " + issue.number);
+            
+          message = from + ": make sure #" + issue.number + " is still being worked on." 
+                    + "\n#" + issue.number + " - " + issue.title + " - " + issue.html_url;
+        } else {
+          message = from + ": couldn't find anything!";
+        }
+        bot.say(to, message);
+      });
+    });
+    return;
+  }
 }
 
 bot.addListener("message", handler);
