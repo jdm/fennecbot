@@ -141,7 +141,6 @@ function handler(from, to, original_message) {
   var reviewable_re = /https:\/\/reviewable\.io\/reviews\/([\w\-]+)\/([\w\-]+)(\/)(\d+)/g;
   var issues;
   while ((issues = (issues_re.exec(message) || reviewable_re.exec(message) )) !== null) {
-    // ignore github links with content after the numbers #24
     if (issues[5] && issues[5] != "/") { return; }
     
     var type = issues[3];
