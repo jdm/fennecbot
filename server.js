@@ -123,7 +123,8 @@ function handler(from, to, original_message) {
   // issue 123
   // " #123" to avoid catching html anchors
   // "#123" at the start of a line
-  var numbers_re = /(issue\s|\s#|^#)(\d[\d]+)/g;
+  // "(#123)"
+  var numbers_re = /(issue\s|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
   var numbers;
   while ((numbers = numbers_re.exec(message)) !== null) {
     searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
