@@ -46,5 +46,19 @@ describe("server", function() {
       assert.equal(searchGithub.called, false);
       assert.equal(say.length, 0);
     });
+
+    it("should request multiple issues when multiple #<number> entries found", function() {
+      searchGithub.withArgs("/52").callsArgWith(3, null, require("./data/issue-52-success.json"));
+      searchGithub.withArgs("/34").callsArgWith(3, null, require("./data/issue-34-success.json"));
+
+      handler("bob", "testbot", "#52 test #34");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(searchGithub.args[1][0], "/34");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[1].to, "testbot");
+      assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
+    });
   });
 });
