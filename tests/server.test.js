@@ -1,5 +1,4 @@
 var handlerWrapper = require("../server").handlerWrapper;
-var nock = require("nock");
 var sinon = require("sinon");
 var assert = require("chai").assert;
 
@@ -10,10 +9,10 @@ describe("server", function() {
     pings = {};
     say = [];
     actions = [];
-    bot = {
+    var bot = {
       nick: "testbot",
-      say: function(to, message) { say.push({ to: to, message: message })},
-      actions: function(to, message) { actions.push({ to: to, message: message })}
+      say: function(to, message) { say.push({ to: to, message: message }); },
+      actions: function(to, message) { actions.push({ to: to, message: message }); }
     };
 
     searchGithub = sinon.stub();
@@ -22,7 +21,7 @@ describe("server", function() {
 
   describe("handler issue number", function() {
     it("should request issue when #<number> is detected", function() {
-      searchGithub.callsArgWith(3, null, require('./data/issue-52-success.json'));
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
 
       handler("bob", "testbot", "test string #52");
 
@@ -32,7 +31,7 @@ describe("server", function() {
     });
 
     it("should request issue when #<number> is first in line", function() {
-      searchGithub.callsArgWith(3, null, require('./data/issue-52-success.json'));
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
 
       handler("bob", "testbot", "#52 test");
 
