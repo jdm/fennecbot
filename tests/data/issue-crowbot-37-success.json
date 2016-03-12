@@ -1,0 +1,47 @@
+{
+  "url": "https://api.github.com/repos/servo/crowbot/issues/37",
+  "repository_url": "https://api.github.com/repos/servo/crowbot",
+  "labels_url": "https://api.github.com/repos/servo/crowbot/issues/37/labels{/name}",
+  "comments_url": "https://api.github.com/repos/servo/crowbot/issues/37/comments",
+  "events_url": "https://api.github.com/repos/servo/crowbot/issues/37/events",
+  "html_url": "https://github.com/servo/crowbot/issues/37",
+  "id": 135798994,
+  "number": 37,
+  "title": "Make crowbot testable",
+  "user": {
+    "login": "jdm",
+    "id": 27658,
+    "avatar_url": "https://avatars.githubusercontent.com/u/27658?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/jdm",
+    "html_url": "https://github.com/jdm",
+    "followers_url": "https://api.github.com/users/jdm/followers",
+    "following_url": "https://api.github.com/users/jdm/following{/other_user}",
+    "gists_url": "https://api.github.com/users/jdm/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/jdm/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/jdm/subscriptions",
+    "organizations_url": "https://api.github.com/users/jdm/orgs",
+    "repos_url": "https://api.github.com/users/jdm/repos",
+    "events_url": "https://api.github.com/users/jdm/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/jdm/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "labels": [
+    {
+      "url": "https://api.github.com/repos/servo/crowbot/labels/E-easy",
+      "name": "E-easy",
+      "color": "bfe5bf"
+    }
+  ],
+  "state": "open",
+  "locked": false,
+  "assignee": null,
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2016-02-23T17:06:34Z",
+  "updated_at": "2016-03-02T20:38:21Z",
+  "closed_at": null,
+  "body": "There have been some regressions recently because crowbot has grown organically and it's hard to test everything. We should refactor the bot to separate the interaction with the IRC library from the actual handlers, which would allow us to write automated tests that verify that everything behaves as expected. I imagine the handler function could accept a `say` argument which would be a function to be called in place of `bot.say` and `bot.act`. For the tests this could just append to an array, while for the real bot it would redirect to the appropriate methods of `bot`.",
+  "closed_by": null
+}

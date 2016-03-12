@@ -1,0 +1,49 @@
+{
+  "url": "https://api.github.com/repos/servo/crowbot/issues/41",
+  "repository_url": "https://api.github.com/repos/servo/crowbot",
+  "labels_url": "https://api.github.com/repos/servo/crowbot/issues/41/labels{/name}",
+  "comments_url": "https://api.github.com/repos/servo/crowbot/issues/41/comments",
+  "events_url": "https://api.github.com/repos/servo/crowbot/issues/41/events",
+  "html_url": "https://github.com/servo/crowbot/pull/41",
+  "id": 137985263,
+  "number": 41,
+  "title": "Add basic tests",
+  "user": {
+    "login": "bobthekingofegypt",
+    "id": 332141,
+    "avatar_url": "https://avatars.githubusercontent.com/u/332141?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/bobthekingofegypt",
+    "html_url": "https://github.com/bobthekingofegypt",
+    "followers_url": "https://api.github.com/users/bobthekingofegypt/followers",
+    "following_url": "https://api.github.com/users/bobthekingofegypt/following{/other_user}",
+    "gists_url": "https://api.github.com/users/bobthekingofegypt/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/bobthekingofegypt/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/bobthekingofegypt/subscriptions",
+    "organizations_url": "https://api.github.com/users/bobthekingofegypt/orgs",
+    "repos_url": "https://api.github.com/users/bobthekingofegypt/repos",
+    "events_url": "https://api.github.com/users/bobthekingofegypt/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/bobthekingofegypt/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignee": null,
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2016-03-02T20:35:02Z",
+  "updated_at": "2016-03-09T19:55:41Z",
+  "closed_at": null,
+  "pull_request": {
+    "url": "https://api.github.com/repos/servo/crowbot/pulls/41",
+    "html_url": "https://github.com/servo/crowbot/pull/41",
+    "diff_url": "https://github.com/servo/crowbot/pull/41.diff",
+    "patch_url": "https://github.com/servo/crowbot/pull/41.patch"
+  },
+  "body": "Refactor code to allow testability\r\n\r\nStill in progress",
+  "closed_by": null
+}
