@@ -195,7 +195,84 @@ describe("server", function() {
       assert.equal(say.length, 0);
       assert.equal(action.length, 1);
     });
-    
   });
 
+  describe("no bot nick", function() {
+    it("should do nothing if doesn't match url checks", function() {
+      handler("bob", "testbot", "super exciting message");
+
+      assert.equal(say.length, 0);
+      assert.equal(action.length, 0);
+
+    });
+  });
+
+  describe("ping messages", function() {
+    it("should add pingee to ping list and send remark", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      handler("bob", "testbot", "fredbot: ping mark a message");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "you got it!");
+
+      var ping = pings['mark'][0];
+      assert.equal(ping.from, 'bob');
+      assert.equal(ping.message, 'a message');
+      assert.equal(ping.silent, false);
+    });
+
+    it("should append pingee to ping list when one already exists", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      pings['mark'] = [ { from: 'old', message: 'yep', silent: false }];
+
+      handler("bob", "testbot", "fredbot: ping mark a message");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "you got it!");
+
+      var ping = pings['mark'][1];
+      assert.equal(ping.from, 'bob');
+      assert.equal(ping.message, 'a message');
+      assert.equal(ping.silent, false);
+    });
+
+    it("should add pingee to ping list and send remark with tell alias", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      handler("bob", "testbot", "fredbot: tell mark a message");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "you got it!");
+
+      var ping = pings['mark'][0];
+      assert.equal(ping.from, 'bob');
+      assert.equal(ping.message, 'a message');
+      assert.equal(ping.silent, false);
+    });
+
+    it("should add pingee to ping list and send remark with silent", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      handler("bob", "testbot", "fredbot: silentping mark a message");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "you got it!");
+
+      var ping = pings['mark'][0];
+      assert.equal(ping.from, 'bob');
+      assert.equal(ping.message, 'a message');
+      assert.equal(ping.silent, true);
+    });
+
+    it("should refuse ping when missing the message", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      handler("bob", "testbot", "fredbot: ping mark");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Please specify a nick and a message");
+    });
+  });
 });
