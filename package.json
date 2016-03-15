@@ -6,8 +6,9 @@
     "url": "https://github.com/leibovic/fennecbot"
   },
   "dependencies": {
-    "request": "*",
-    "irc" : "*"
+    "irc": "*",
+    "node-persist": "0.0.8",
+    "request": "*"
   },
   "engines": {
     "node": "0.10.x"

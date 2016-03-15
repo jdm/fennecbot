@@ -2,7 +2,8 @@ var irc = require("irc"),
     https = require("https"),
     request = require("request"),
     notes = require("./notes"),
-    config = require("./config");
+    config = require("./config"),
+    storage = require('node-persist');
 
 if (module.parent) {
   return;
@@ -12,14 +13,23 @@ var bot = new irc.Client(config.server, config.botName, {
   channels: config.channels,
   port: config.port,
   secure: config.secure,
-  autoRejoin: config.autoRejoin,
+  autoRejoin: config.autoRejoin
 });
 
 bot.addListener('error', function(message) {
     console.log('error: ', message);
 });
 
-var pings={};
+storage.initSync({
+    dir:'pings',
+    stringify: JSON.stringify,
+    parse: JSON.parse,
+    encoding: 'utf8',
+    logging: false,
+    continuous: true,
+    interval: false,
+    ttl: false
+});
 
 function searchGithub(params, org, repo, callback) {
   var reqParams = {
@@ -98,18 +108,19 @@ function findIssue(from, to, search) {
 
 // Listener for the autopinger
 bot.addListener("join",function(channel,who){
-  who = who.toLowerCase();
-  if (pings[who]) {
-   var to = channel;
-   if (pings[who].length > 5){
-     to = who; // Avoid spam, PM if there are a lot of  pings
-   }
-   for (i in pings[who]) {
-    var tempto = pings[who][i].silent ? who : to; // For messages marked "silent"
-    bot.say(tempto, who + ": " + pings[who][i].from + " said " + pings[who][i].message)
-   }
-   delete pings[who];
-  }
+    who = who.toLowerCase();
+    var pingsForUser = storage.getItemSync(who);
+    if (pingsForUser) {
+        var to = channel;
+        if (pingsForUser.length > 5){
+            to = who; // Avoid spam, PM if there are a lot of  pings
+        }
+        for (i in pingsForUser) {
+            var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
+            bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
+        }
+        storage.removeItemSync(who);
+    }
 });
 
 function handler(from, to, original_message) {
@@ -143,7 +154,7 @@ function handler(from, to, original_message) {
   var issues;
   while ((issues = (issues_re.exec(message) || reviewable_re.exec(message) )) !== null) {
     if (issues[5] && issues[5] != "/") { continue; }
-    
+
     var type = issues[3];
     searchGithub("/" + issues[4], issues[1], issues[2], function(error, issue) {
       if (error) {
@@ -192,10 +203,11 @@ function handler(from, to, original_message) {
     try {
       var command = original_message.match(/(ping|tell)(.*)/i)[2].trim().match(/([^ ]*) (.*)/);
       pingee = command[1].toLowerCase();
-      if (!pings[pingee]) {
-        pings[pingee] = [];
-      }
-      pings[pingee].push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+      var pingsForUser = storage.getItemSync(pingee);
+      if (!pingsForUser) pingsForUser = [];
+
+      pingsForUser.push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+      storage.setItemSync(pingee, pingsForUser);
       var choices = ["you got it!",
                      "you bet!",
                      "ok!",
@@ -206,7 +218,7 @@ function handler(from, to, original_message) {
                      "all this computing power, and I'm being used as a glorified telephone."];
       bot.say(to, choices[choose(choices)]);
     } catch(e) {
-      bot.say(to,"Please specify a nick and a message")
+      bot.say(to,"Please specify a nick and a message");
     }
     return;
   }
@@ -214,7 +226,7 @@ function handler(from, to, original_message) {
   review_match = message.match(/what should (.*) review/);
   if (review_match) {
     var reviewer = review_match[1] == "i" ? from : review_match[1];
-    findIssue(from, to, "?labels=S-awaiting-review&assignee=" + reviewer)
+    findIssue(from, to, "?labels=S-awaiting-review&assignee=" + reviewer);
   }
 
   if (message.indexOf("what should i work on") > -1) {
@@ -253,7 +265,7 @@ function handler(from, to, original_message) {
     });
     return;
   }
-  
+
   if (message.indexOf("easy bug") > -1) {
     findIssue(from, to, "?labels=E-Easy");
     return;
@@ -307,41 +319,41 @@ function handler(from, to, original_message) {
     });
     return;
   }
-  
+
   if (message.indexOf('what issue should i poke') > -1) {
     // github API has the key since, but this unfortunately does the opposite than what is needed
     // what follows "hopes" that in the returned results there is some issue that was last updated
     // at most 14 days before the call...
-    var searchPreamble = '?assignee=none&sort=updated&direction=desc&labels=C-assigned'; 
-    
+    var searchPreamble = '?assignee=none&sort=updated&direction=desc&labels=C-assigned';
+
     searchGithub(searchPreamble + '&labels=E-easy', 'servo', 'servo', function(error, issuesE) {
       if (error) {
         console.log(error);
         return;
       }
-      
+
       searchGithub(searchPreamble + '&labels=E-less easy', 'servo', 'servo', function(error, issuesLE) {
         if (error) {
           console.log(error);
           return;
         }
-        
+
         var today = new Date();
-        var lastUpdated = function(issue) { 
+        var lastUpdated = function(issue) {
           var updated_at = new Date(issue.updated_at);
           var ms = today - updated_at;
           var days = Math.round(ms / 86400000);
           return days >= 14;
         };
-         
+
         var issues = issuesE.concat(issuesLE).filter(lastUpdated);
         var index = choose(issues);
         var issue = issues[index];
         var message;
         if (issue) {
           console.log(bot.nick + " found issue " + issue.number);
-            
-          message = from + ": make sure #" + issue.number + " is still being worked on." 
+
+          message = from + ": make sure #" + issue.number + " is still being worked on."
                     + "\n#" + issue.number + " - " + issue.title + " - " + issue.html_url;
         } else {
           message = from + ": couldn't find anything!";
