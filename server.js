@@ -68,30 +68,31 @@ function choose(list) {
   return Math.floor(Math.random() * list.length);
 }
 
-// Finds an issue that matches the search term, and says it to the person who asked about it.
-function findIssue(from, to, search, bot) {
-  searchGithub(search, 'servo', 'servo', function(error, issues) {
-    if (error) {
-      console.log(error);
-      return;
-    }
 
-    // Find a random bug from the array.
-    var index = choose(issues);
-    var issue = issues[index];
-    var message;
-    if (issue) {
-      console.log(bot.nick + " found issue " + issue.number);
+var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes) {
+  // Finds an issue that matches the search term, and says it to the person who asked about it.
+  function findIssue(from, to, search, bot) {
+    searchGithub(search, 'servo', 'servo', function(error, issues) {
+      if (error) {
+        console.log(error);
+        return;
+      }
 
-      message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
-    } else {
-      message = from + ": couldn't find anything!";
-    }
-    bot.say(to, message);
-  });
-}
+      // Find a random bug from the array.
+      var index = choose(issues);
+      var issue = issues[index];
+      var message;
+      if (issue) {
+        console.log(bot.nick + " found issue " + issue.number);
 
-var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub) {
+        message = from + ": Try working on issue #" + issue.number + " - " + issue.title + " - " + issue.html_url;
+      } else {
+        message = from + ": couldn't find anything!";
+      }
+      bot.say(to, message);
+    });
+  }
+
   return function handler(from, to, original_message) {
     if (pingsForUser) {
     if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/)) {
@@ -137,6 +138,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       });
     }
 
+    //TODO test this
     if (message.indexOf('w3.org/tr') > -1) {
       var allowed = ['PNG'];
       var found = false;
@@ -349,7 +351,7 @@ var bot = new irc.Client(config.server, config.botName, {
   autoRejoin: config.autoRejoin,
 });
 
-var handler = handlerWrapper(pings, bot, searchGithub);
+var handler = handlerWrapper(pings, bot, searchGithub, notes);
 
 bot.addListener('error', function(message) {
     console.log('error: ', message);

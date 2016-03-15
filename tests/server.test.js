@@ -1,6 +1,7 @@
 var handlerWrapper = require("../server").handlerWrapper;
 var sinon = require("sinon");
 var assert = require("chai").assert;
+var nock = require("nock");
 
 describe("server", function() {
   var pings, say, action, searchGithub, handler, sandbox;
@@ -9,6 +10,10 @@ describe("server", function() {
     pings = {};
     say = [];
     action = [];
+    var notes = {
+      recent: function(from, to) { return "some link to notes"; }
+    };
+
     var bot = {
       nick: "fredbot",
       say: function(to, message) { say.push({ to: to, message: message }); },
@@ -17,7 +22,7 @@ describe("server", function() {
 
     sandbox = sinon.sandbox.create();
     searchGithub = sinon.stub();
-    handler = handlerWrapper(pings, bot, searchGithub);
+    handler = handlerWrapper(pings, bot, searchGithub, notes);
   });
 
   afterEach(function () {
@@ -273,6 +278,141 @@ describe("server", function() {
 
       assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "Please specify a nick and a message");
+    });
+  });
+
+  describe("should review", function() {
+    it("should return an issue to review", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, require("./data/reviews-jdm.json"));
+      
+      handler("jdm", "testbot", "fredbot: what should I review");
+      
+      assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: Try working on issue #9870 - Can\'t click on Twitter links - https://github.com/servo/servo/issues/9870"); 
+    });
+
+    it("should print message when no issues to review", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, require("./data/reviews-jdm-none.json"));
+      
+      handler("jdm", "testbot", "fredbot: what should I review");
+      
+      assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: couldn't find anything!");
+    });
+
+    it("should say nothing when github api errors", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, new Error(), null);
+      
+      handler("jdm", "testbot", "fredbot: what should I review");
+      
+      assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say.length, 0); 
+    });
+  });
+
+  describe("should work on", function() {
+    it("should return a tech to work on", function(done) {
+      sandbox.stub(Math, "random").returns(0.1);
+      nock('https://platform.html5.org')
+        .get('/')
+        .replyWithFile(200, __dirname + '/data/platform.html5.org');
+      
+      handler("jdm", "testbot", "fredbot: what should I work on");
+
+      //this isn't the best idea, but it'll do for now.
+      setTimeout(function() {
+        assert.equal(say[0].to, "testbot"); 
+        assert.equal(say[0].message, "jdm: you should write some tests for compositing and blending (https://drafts.fxtf.org/compositing/)"); 
+        done();
+      }, 5);
+    });
+
+    it("should return shrug when request fails", function(done) {
+      sandbox.stub(Math, "random").returns(0.1);
+      nock('https://platform.html5.org')
+        .get('/')
+        .replyWithError('oh no!');
+      
+      handler("jdm", "testbot", "fredbot: what should I work on");
+
+      //this isn't the best idea, but it'll do for now.
+      setTimeout(function() {
+        assert.equal(say[0].to, "testbot"); 
+        assert.equal(say[0].message, "jdm: *shrug*");
+        done();
+      }, 5);
+    });
+  });
+
+  describe("finding an easy bug", function() {
+    it("should return an easy bug", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, require("./data/easy-bugs.json"));
+      
+      handler("jdm", "testbot", "fredbot: easy bug");
+      
+      assert.equal(searchGithub.args[0][0], "?labels=E-Easy");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: Try working on issue #9995 - test_ref() got an unexpected keyword argument \'kind\'.Fixes #9986 - https://github.com/servo/servo/pull/9995");
+    });
+
+    it("should print message when no easy bugs", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, []);
+      
+      handler("jdm", "testbot", "fredbot: easy bug");
+      
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: couldn't find anything!");
+    });
+  });
+
+  describe("asking for help", function() {
+    it("should print the wiki url for help", function() {
+      handler("jdm", "testbot", "fredbot: help");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: Try looking at our wiki: https://github.com/servo/servo/blob/master/CONTRIBUTING.md");
+    });
+  });
+
+  describe("notes", function() {
+    it("should return notes from notes recent", function() {
+      handler("jdm", "testbot", "fredbot: notes");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "some link to notes");
+    });
+  });
+
+  describe("build", function() {
+    it("should return build readme link", function() {
+      handler("jdm", "testbot", "fredbot: build");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: Try looking at our readme: https://github.com/servo/servo/#prerequisites");
+    });
+  });
+
+  describe("source", function() {
+    it("should return source link", function() {
+      handler("jdm", "testbot", "fredbot: source");
+
+      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].message, "jdm: https://github.com/jdm/fennecbot");
     });
   });
 });
