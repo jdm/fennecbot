@@ -5,17 +5,6 @@ var irc = require("irc"),
     config = require("./config"),
     storage = require('node-persist');
 
-storage.initSync({
-    dir:'pings',
-    stringify: JSON.stringify,
-    parse: JSON.parse,
-    encoding: 'utf8',
-    logging: false,
-    continuous: true,
-    interval: false,
-    ttl: false
-});
-
 function searchGithub(params, org, repo, callback) {
   var reqParams = {
     uri: 'https://api.github.com/repos/' + org + '/' + repo + '/issues' + params,
@@ -69,7 +58,7 @@ function choose(list) {
 }
 
 
-var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes) {
+var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage) {
   // Finds an issue that matches the search term, and says it to the person who asked about it.
   function findIssue(from, to, search, bot) {
     searchGithub(search, 'servo', 'servo', function(error, issues) {
@@ -94,7 +83,6 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
   }
 
   return function handler(from, to, original_message) {
-    if (pingsForUser) {
     if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/)) {
       return;
     }
@@ -105,8 +93,8 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     // issue 123
     // " #123" to avoid catching html anchors
     // "#123" at the start of a line
-  // "(#123)"
-  var numbers_re = /(issue\s|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
+    // "(#123)"
+    var numbers_re = /(issue\s|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
     var numbers;
     while ((numbers = numbers_re.exec(message)) !== null) {
       searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
@@ -120,7 +108,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     }
 
     // watch for github issue links to any repository
-  var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issues|pull)\/(\d+)(\/[^\s]+)?/g;
+    var issues_re = /https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/(issues|pull)\/(\d+)(\/[^\s]+)?/g;
     var reviewable_re = /https:\/\/reviewable\.io\/reviews\/([\w\-]+)\/([\w\-]+)(\/)(\d+)/g;
     var issues;
     while ((issues = (issues_re.exec(message) || reviewable_re.exec(message) )) !== null) {
@@ -175,11 +163,12 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       try {
         var command = original_message.match(/(ping|tell)(.*)/i)[2].trim().match(/([^ ]*) (.*)/);
         pingee = command[1].toLowerCase();
-      var pingsForUser = storage.getItemSync(pingee);
-      if (!pingsForUser) pingsForUser = [];
 
-      pingsForUser.push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
-      storage.setItemSync(pingee, pingsForUser);
+        var pingsForUser = pingStorage.getItemSync(pingee);
+        if (!pingsForUser) pingsForUser = [];
+
+        pingsForUser.push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+        pingStorage.setItemSync(pingee, pingsForUser);
         var choices = ["you got it!",
                        "you bet!",
                        "ok!",
@@ -232,6 +221,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
                          "profile the implementation of ${tech}",
                          "remove all unsafe code from ${tech}"];
           var saying = choices[choose(choices)];
+
           bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + tech[1] + ')');
         }
       });
@@ -338,19 +328,20 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
   }
 }
 
-var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings, bot) {
+var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings, bot, pingStorage) {
   return function pingResponder(channel, who) {
     who = who.toLowerCase();
-    if (pings[who]) {
-      var to = channel;
-      if (pings[who].length > 5){
-        to = who; // Avoid spam, PM if there are a lot of  pings
-      }
-      for (i in pings[who]) {
-        var tempto = pings[who][i].silent ? who : to; // For messages marked "silent"
-        bot.say(tempto, who + ": " + pings[who][i].from + " said " + pings[who][i].message)
-      }
-      delete pings[who];
+    var pingsForUser = pingStorage.getItemSync(who);
+    if (pingsForUser) {
+        var to = channel;
+        if (pingsForUser.length > 5){
+            to = who; // Avoid spam, PM if there are a lot of  pings
+        }
+        for (i in pingsForUser) {
+            var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
+            bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
+        }
+        pingStorage.removeItemSync(who);
     }
   }
 }
@@ -359,7 +350,23 @@ if (module.parent) {
   return;
 }
 
+storage.initSync({
+    dir:'pings',
+    stringify: JSON.stringify,
+    parse: JSON.parse,
+    encoding: 'utf8',
+    logging: false,
+    continuous: true,
+    interval: false,
+    ttl: false
+});
+
 var pings={};
+var pingStorage = {
+  getItemSync: storage.getItemSync,
+  setItemSync: storage.setItemSync,
+  removeItemSync: storage.removeItemSync
+}
 
 var bot = new irc.Client(config.server, config.botName, {
   channels: config.channels,
@@ -368,8 +375,8 @@ var bot = new irc.Client(config.server, config.botName, {
   autoRejoin: config.autoRejoin,
 });
 
-var handler = handlerWrapper(pings, bot, searchGithub, notes);
-var pingResponder = pingResponderWrapper(pings, bot);
+var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage);
+var pingResponder = pingResponderWrapper(pings, bot, pingStorage);
 
 bot.addListener('error', function(message) {
     console.log('error: ', message);

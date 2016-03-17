@@ -5,10 +5,15 @@ var assert = require("chai").assert;
 var nock = require("nock");
 
 describe("server", function() {
-  var bot, pings, say, action, searchGithub, handler, sandbox;
+  var bot, pings, say, action, searchGithub, handler, sandbox, pingStorage;
 
   beforeEach(function() {
     pings = {};
+    pingStorage = {
+      getItemSync: function(pingee) { return pings[pingee]; },
+      setItemSync: function(pingee, pingsForUser) { pings[pingee] = pingsForUser; },
+      removeItemSync: function(pingee) { delete pings[pingee]; }
+    };
     say = [];
     action = [];
     var notes = {
@@ -23,7 +28,7 @@ describe("server", function() {
 
     sandbox = sinon.sandbox.create();
     searchGithub = sinon.stub();
-    handler = handlerWrapper(pings, bot, searchGithub, notes);
+    handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage);
   });
 
   afterEach(function () {
@@ -35,6 +40,16 @@ describe("server", function() {
       searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
 
       handler("bob", "testbot", "test string #52");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+    });
+
+    it("should request issue when #<number> is in brackets", function() {
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
+
+      handler("bob", "testbot", "test string (#52)");
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
@@ -87,6 +102,14 @@ describe("server", function() {
       assert.equal(say[0].message, "Issue #37: Make crowbot testable - https://github.com/servo/crowbot/issues/37");
     });
 
+    it("should ignore a github url with stuff at the end", function() {
+      searchGithub.withArgs("/37", "servo", "crowbot").callsArgWith(3, null, require("./data/issue-crowbot-37-success.json"));
+
+      handler("bob", "testbot", "Savago: I'm talking about https://github.com/servo/servo/pull/5366/files#diff-90a6391c1c7c20ffbfca3665f13cd657R490");
+
+      assert.equal(say.length, 0);
+    });
+    
     it("should handle a single reviewable url", function() {
       searchGithub.withArgs("/37", "servo", "crowbot").callsArgWith(3, null, require("./data/issue-crowbot-37-success.json"));
 
@@ -336,7 +359,7 @@ describe("server", function() {
         assert.equal(say[0].to, "testbot");
         assert.equal(say[0].message, "jdm: you should write some tests for compositing and blending (https://drafts.fxtf.org/compositing/)");
         done();
-      }, 5);
+      }, 100);
     });
 
     it("should return shrug when request fails", function(done) {
@@ -352,7 +375,7 @@ describe("server", function() {
         assert.equal(say[0].to, "testbot");
         assert.equal(say[0].message, "jdm: *shrug*");
         done();
-      }, 5);
+      }, 100);
     });
   });
 
@@ -544,7 +567,7 @@ describe("server", function() {
     var pingResponder;
 
     beforeEach(function() {
-      pingResponder = pingResponderWrapper(pings, bot);
+      pingResponder = pingResponderWrapper(pings, bot, pingStorage);
     });
 
     it("should ping if in pings list", function() {
@@ -596,6 +619,7 @@ describe("server", function() {
       assert.equal(say[0].to, "mark");
       assert.equal(say[0].message, "mark: old said yep");
       assert.equal(say.length, 6);
+      assert.equal(pings["mark"], undefined);
     });
 
   });
