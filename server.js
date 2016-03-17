@@ -338,6 +338,23 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
   }
 }
 
+var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings, bot) {
+  return function pingResponder(channel, who) {
+    who = who.toLowerCase();
+    if (pings[who]) {
+      var to = channel;
+      if (pings[who].length > 5){
+        to = who; // Avoid spam, PM if there are a lot of  pings
+      }
+      for (i in pings[who]) {
+        var tempto = pings[who][i].silent ? who : to; // For messages marked "silent"
+        bot.say(tempto, who + ": " + pings[who][i].from + " said " + pings[who][i].message)
+      }
+      delete pings[who];
+    }
+  }
+}
+
 if (module.parent) {
   return;
 }
@@ -352,6 +369,7 @@ var bot = new irc.Client(config.server, config.botName, {
 });
 
 var handler = handlerWrapper(pings, bot, searchGithub, notes);
+var pingResponder = pingResponderWrapper(pings, bot);
 
 bot.addListener('error', function(message) {
     console.log('error: ', message);
@@ -359,17 +377,4 @@ bot.addListener('error', function(message) {
 bot.addListener("message", handler);
 bot.addListener("action", handler);
 // Listener for the autopinger
-bot.addListener("join",function(channel,who){
-  who = who.toLowerCase();
-  if (pings[who]) {
-   var to = channel;
-   if (pings[who].length > 5){
-     to = who; // Avoid spam, PM if there are a lot of  pings
-   }
-   for (i in pings[who]) {
-    var tempto = pings[who][i].silent ? who : to; // For messages marked "silent"
-    bot.say(tempto, who + ": " + pings[who][i].from + " said " + pings[who][i].message)
-   }
-   delete pings[who];
-  }
-});
+bot.addListener("join", pingResponder);

@@ -1,10 +1,11 @@
 var handlerWrapper = require("../server").handlerWrapper;
+var pingResponderWrapper = require("../server").pingResponderWrapper;
 var sinon = require("sinon");
 var assert = require("chai").assert;
 var nock = require("nock");
 
 describe("server", function() {
-  var pings, say, action, searchGithub, handler, sandbox;
+  var bot, pings, say, action, searchGithub, handler, sandbox;
 
   beforeEach(function() {
     pings = {};
@@ -14,7 +15,7 @@ describe("server", function() {
       recent: function(from, to) { return "some link to notes"; }
     };
 
-    var bot = {
+    bot = {
       nick: "fredbot",
       say: function(to, message) { say.push({ to: to, message: message }); },
       action: function(to, message) { action.push({ to: to, message: message }); }
@@ -285,39 +286,39 @@ describe("server", function() {
     it("should return an issue to review", function() {
       sandbox.stub(Math, "random").returns(0.1);
       searchGithub.callsArgWith(3, null, require("./data/reviews-jdm.json"));
-      
+
       handler("jdm", "testbot", "fredbot: what should I review");
-      
+
       assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
       assert.equal(searchGithub.args[0][1], "servo");
 
-      assert.equal(say[0].to, "testbot"); 
-      assert.equal(say[0].message, "jdm: Try working on issue #9870 - Can\'t click on Twitter links - https://github.com/servo/servo/issues/9870"); 
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "jdm: Try working on issue #9870 - Can\'t click on Twitter links - https://github.com/servo/servo/issues/9870");
     });
 
     it("should print message when no issues to review", function() {
       sandbox.stub(Math, "random").returns(0.1);
       searchGithub.callsArgWith(3, null, require("./data/reviews-jdm-none.json"));
-      
+
       handler("jdm", "testbot", "fredbot: what should I review");
-      
+
       assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
       assert.equal(searchGithub.args[0][1], "servo");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: couldn't find anything!");
     });
 
     it("should say nothing when github api errors", function() {
       sandbox.stub(Math, "random").returns(0.1);
       searchGithub.callsArgWith(3, new Error(), null);
-      
+
       handler("jdm", "testbot", "fredbot: what should I review");
-      
+
       assert.equal(searchGithub.args[0][0], "?labels=S-awaiting-review&assignee=jdm");
       assert.equal(searchGithub.args[0][1], "servo");
 
-      assert.equal(say.length, 0); 
+      assert.equal(say.length, 0);
     });
   });
 
@@ -327,13 +328,13 @@ describe("server", function() {
       nock('https://platform.html5.org')
         .get('/')
         .replyWithFile(200, __dirname + '/data/platform.html5.org');
-      
+
       handler("jdm", "testbot", "fredbot: what should I work on");
 
       //this isn't the best idea, but it'll do for now.
       setTimeout(function() {
-        assert.equal(say[0].to, "testbot"); 
-        assert.equal(say[0].message, "jdm: you should write some tests for compositing and blending (https://drafts.fxtf.org/compositing/)"); 
+        assert.equal(say[0].to, "testbot");
+        assert.equal(say[0].message, "jdm: you should write some tests for compositing and blending (https://drafts.fxtf.org/compositing/)");
         done();
       }, 5);
     });
@@ -343,12 +344,12 @@ describe("server", function() {
       nock('https://platform.html5.org')
         .get('/')
         .replyWithError('oh no!');
-      
+
       handler("jdm", "testbot", "fredbot: what should I work on");
 
       //this isn't the best idea, but it'll do for now.
       setTimeout(function() {
-        assert.equal(say[0].to, "testbot"); 
+        assert.equal(say[0].to, "testbot");
         assert.equal(say[0].message, "jdm: *shrug*");
         done();
       }, 5);
@@ -359,23 +360,23 @@ describe("server", function() {
     it("should return an easy bug", function() {
       sandbox.stub(Math, "random").returns(0.1);
       searchGithub.callsArgWith(3, null, require("./data/easy-bugs.json"));
-      
+
       handler("jdm", "testbot", "fredbot: easy bug");
-      
+
       assert.equal(searchGithub.args[0][0], "?labels=E-Easy");
       assert.equal(searchGithub.args[0][1], "servo");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: Try working on issue #9995 - test_ref() got an unexpected keyword argument \'kind\'.Fixes #9986 - https://github.com/servo/servo/pull/9995");
     });
 
     it("should print message when no easy bugs", function() {
       sandbox.stub(Math, "random").returns(0.1);
       searchGithub.callsArgWith(3, null, []);
-      
+
       handler("jdm", "testbot", "fredbot: easy bug");
-      
-      assert.equal(say[0].to, "testbot"); 
+
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: couldn't find anything!");
     });
   });
@@ -384,7 +385,7 @@ describe("server", function() {
     it("should print the wiki url for help", function() {
       handler("jdm", "testbot", "fredbot: help");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: Try looking at our wiki: https://github.com/servo/servo/blob/master/CONTRIBUTING.md");
     });
   });
@@ -393,7 +394,7 @@ describe("server", function() {
     it("should return notes from notes recent", function() {
       handler("jdm", "testbot", "fredbot: notes");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "some link to notes");
     });
   });
@@ -402,7 +403,7 @@ describe("server", function() {
     it("should return build readme link", function() {
       handler("jdm", "testbot", "fredbot: build");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: Try looking at our readme: https://github.com/servo/servo/#prerequisites");
     });
   });
@@ -411,8 +412,191 @@ describe("server", function() {
     it("should return source link", function() {
       handler("jdm", "testbot", "fredbot: source");
 
-      assert.equal(say[0].to, "testbot"); 
+      assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "jdm: https://github.com/jdm/fennecbot");
     });
+  });
+
+  describe("botsnack", function() {
+    it("should set action if contains /me", function() {
+      sandbox.stub(Math, "random").returns(0.1);
+
+      handler("jdm", "testbot", "fredbot: botsnack");
+
+      assert.equal(action[0].to, "testbot");
+      assert.equal(action[0].message, "beams");
+    });
+
+    it("should set say if doesnt contains /me", function() {
+      sandbox.stub(Math, "random").returns(0.9);
+
+      handler("jdm", "testbot", "fredbot: botsnack");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "^_^");
+    });
+  });
+
+  describe("find pull requests needing a reviewer", function() {
+    var clock;
+
+    beforeEach(function() {
+      clock = sinon.useFakeTimers();
+    });
+
+    afterEach(function() {
+      clock.restore();
+    });
+
+    it("should return a pull request requiring review", function() {
+      searchGithub.callsArgWith(3, null, require("./data/pull-require-review.json"));
+
+      handler("jdm", "testbot", "fredbot: what prs need a reviewer");
+
+      assert.equal(searchGithub.args[0][0], "?assignee=none&labels=S-awaiting-review");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      clock.tick(651);
+
+      assert.equal(say.length, 1);
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Implement Document#elementsFromPoint: https://github.com/servo/servo/pull/10034");
+
+      clock.tick(651);
+      assert.equal(say.length, 2);
+      assert.equal(say[1].to, "testbot");
+      assert.equal(say[1].message, "Update WebSocket blocked ports to match the Fetch spec: https://github.com/servo/servo/pull/10014");
+
+      clock.tick(651);
+      assert.equal(say.length, 2);
+    });
+
+    it("should say nothing when there is an error", function() {
+      searchGithub.callsArgWith(3, new Error(), require("./data/pull-require-review.json"));
+
+      handler("jdm", "testbot", "fredbot: what prs need a reviewer");
+
+      assert.equal(say.length, 0);
+    });
+  });
+
+  describe("what issue should I poke", function() {
+    it("should find an easy-ish issue to poke", function() {
+      var easyBugs = require("./data/easy-bugs.json");
+      easyBugs.forEach(function(easyBug) {
+        easyBug.updated_at = new Date(+new Date - 12096e5);
+      });
+
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, easyBugs);
+
+      handler("jdm", "testbot", "fredbot: what issue should I poke");
+
+      var preamble = "?assignee=none&sort=updated&direction=desc&labels=C-assigned";
+      assert.equal(searchGithub.args[0][0], preamble + "&labels=E-easy");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "jdm: make sure #9995 is still being worked on.\n#9995 - test_ref() got an unexpected keyword argument \'kind\'.Fixes #9986 - https://github.com/servo/servo/pull/9995");
+    });
+
+    it("should say if no issue is found", function() {
+      var easyBugs = require("./data/easy-bugs.json");
+      easyBugs.forEach(function(easyBug) {
+        easyBug.updated_at = new Date(+new Date + 12096e5);
+      });
+
+      sandbox.stub(Math, "random").returns(0.1);
+      searchGithub.callsArgWith(3, null, easyBugs);
+
+      handler("jdm", "testbot", "fredbot: what issue should I poke");
+
+      var preamble = "?assignee=none&sort=updated&direction=desc&labels=C-assigned";
+      assert.equal(searchGithub.args[0][0], preamble + "&labels=E-easy");
+      assert.equal(searchGithub.args[0][1], "servo");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "jdm: couldn't find anything!");
+    });
+
+    it("should choose from merged arrays", function() {
+      var easyIshBugs = require("./data/easy-ish-bugs.json");
+      easyIshBugs.forEach(function(easyIshBug) {
+        easyIshBug.updated_at = new Date(+new Date - 12096e5);
+      });
+      var easyBugs = require("./data/easy-bugs.json");
+      easyBugs.forEach(function(easyBug) {
+        easyBug.updated_at = new Date(+new Date - 12096e5);
+      });
+
+      sandbox.stub(Math, "random").returns(0.99);
+      searchGithub.onFirstCall().callsArgWith(3, null, easyBugs)
+        .onSecondCall().callsArgWith(3, null, easyIshBugs);
+
+      handler("jdm", "testbot", "fredbot: what issue should I poke");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "jdm: make sure #9994 is still being worked on.\n#9994 - Implement HTMLTextArea.setSelectionRange - https://github.com/servo/servo/issues/9994");
+    });
+  });
+
+  describe("ping on join", function() {
+    var pingResponder;
+
+    beforeEach(function() {
+      pingResponder = pingResponderWrapper(pings, bot);
+    });
+
+    it("should ping if in pings list", function() {
+      pings["mark"] = [ { from: "old", message: "yep", silent: false }];
+
+      pingResponder("testbot", "mark");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "mark: old said yep");
+    });
+
+    it("should ping if in pings list multiple times", function() {
+      pings["mark"] = [
+        { from: "old", message: "yep", silent: false },
+        { from: "trevor", message: "woop", silent: false }
+      ];
+
+      pingResponder("testbot", "mark");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "mark: old said yep");
+      assert.equal(say[1].to, "testbot");
+      assert.equal(say[1].message, "mark: trevor said woop");
+    });
+
+    it("should say nothing if not in the list", function() {
+      pings["mark"] = [
+        { from: "old", message: "yep", silent: false },
+        { from: "trevor", message: "woop", silent: false }
+      ];
+
+      pingResponder("testbot", "tom");
+
+      assert.equal(say.length, 0);
+    });
+
+    it("should send a private message if lots of mentions", function() {
+      pings["mark"] = [
+        { from: "old", message: "yep", silent: false },
+        { from: "old", message: "yep", silent: false },
+        { from: "old", message: "yep", silent: false },
+        { from: "old", message: "yep", silent: false },
+        { from: "old", message: "yep", silent: false },
+        { from: "trevor", message: "woop", silent: false }
+      ];
+
+      pingResponder("testbot", "mark");
+
+      assert.equal(say[0].to, "mark");
+      assert.equal(say[0].message, "mark: old said yep");
+      assert.equal(say.length, 6);
+    });
+
   });
 });

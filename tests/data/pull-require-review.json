@@ -1,0 +1,142 @@
+[
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/10034",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/10034/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/10034/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/10034/events",
+    "html_url": "https://github.com/servo/servo/pull/10034",
+    "id": 141318901,
+    "number": 10034,
+    "title": "Implement Document#elementsFromPoint",
+    "user": {
+      "login": "rilut",
+      "id": 1331389,
+      "avatar_url": "https://avatars.githubusercontent.com/u/1331389?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rilut",
+      "html_url": "https://github.com/rilut",
+      "followers_url": "https://api.github.com/users/rilut/followers",
+      "following_url": "https://api.github.com/users/rilut/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rilut/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rilut/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rilut/subscriptions",
+      "organizations_url": "https://api.github.com/users/rilut/orgs",
+      "repos_url": "https://api.github.com/users/rilut/repos",
+      "events_url": "https://api.github.com/users/rilut/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rilut/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/S-awaiting-review",
+        "name": "S-awaiting-review",
+        "color": "d4c5f9"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": {
+      "login": "ecoal95",
+      "id": 1323194,
+      "avatar_url": "https://avatars.githubusercontent.com/u/1323194?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ecoal95",
+      "html_url": "https://github.com/ecoal95",
+      "followers_url": "https://api.github.com/users/ecoal95/followers",
+      "following_url": "https://api.github.com/users/ecoal95/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ecoal95/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ecoal95/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ecoal95/subscriptions",
+      "organizations_url": "https://api.github.com/users/ecoal95/orgs",
+      "repos_url": "https://api.github.com/users/ecoal95/repos",
+      "events_url": "https://api.github.com/users/ecoal95/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ecoal95/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "milestone": null,
+    "comments": 9,
+    "created_at": "2016-03-16T16:00:59Z",
+    "updated_at": "2016-03-17T10:04:43Z",
+    "closed_at": null,
+    "pull_request": {
+      "url": "https://api.github.com/repos/servo/servo/pulls/10034",
+      "html_url": "https://github.com/servo/servo/pull/10034",
+      "diff_url": "https://github.com/servo/servo/pull/10034.diff",
+      "patch_url": "https://github.com/servo/servo/pull/10034.patch"
+    },
+    "body": "Fixes #9859.\r\n\r\nI'm trying to implement Document#elementsFromPoint, which I need to reuse the `get_nodes_under_mouse` and `mouse_over` function which have been removed a days ago in #9715. So I added it back while I'm not sure if my implementation is correct. Any advice will be greatly appreciated.\r\n\r\n<!-- Reviewable:start -->\r\n---\r\nThis change is [<img src=\"https://reviewable.io/review_button.svg\" height=\"35\" align=\"absmiddle\" alt=\"Reviewable\"/>](https://reviewable.io/reviews/servo/servo/10034)\r\n<!-- Reviewable:end -->\r\n"
+  },
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/10014",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/10014/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/10014/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/10014/events",
+    "html_url": "https://github.com/servo/servo/pull/10014",
+    "id": 141038846,
+    "number": 10014,
+    "title": "Update WebSocket blocked ports to match the Fetch spec",
+    "user": {
+      "login": "saurvs",
+      "id": 12742708,
+      "avatar_url": "https://avatars.githubusercontent.com/u/12742708?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/saurvs",
+      "html_url": "https://github.com/saurvs",
+      "followers_url": "https://api.github.com/users/saurvs/followers",
+      "following_url": "https://api.github.com/users/saurvs/following{/other_user}",
+      "gists_url": "https://api.github.com/users/saurvs/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/saurvs/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/saurvs/subscriptions",
+      "organizations_url": "https://api.github.com/users/saurvs/orgs",
+      "repos_url": "https://api.github.com/users/saurvs/repos",
+      "events_url": "https://api.github.com/users/saurvs/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/saurvs/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/S-awaiting-review",
+        "name": "S-awaiting-review",
+        "color": "d4c5f9"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": {
+      "login": "KiChjang",
+      "id": 3248587,
+      "avatar_url": "https://avatars.githubusercontent.com/u/3248587?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/KiChjang",
+      "html_url": "https://github.com/KiChjang",
+      "followers_url": "https://api.github.com/users/KiChjang/followers",
+      "following_url": "https://api.github.com/users/KiChjang/following{/other_user}",
+      "gists_url": "https://api.github.com/users/KiChjang/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/KiChjang/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/KiChjang/subscriptions",
+      "organizations_url": "https://api.github.com/users/KiChjang/orgs",
+      "repos_url": "https://api.github.com/users/KiChjang/repos",
+      "events_url": "https://api.github.com/users/KiChjang/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/KiChjang/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "milestone": null,
+    "comments": 9,
+    "created_at": "2016-03-15T17:07:48Z",
+    "updated_at": "2016-03-17T13:51:52Z",
+    "closed_at": null,
+    "pull_request": {
+      "url": "https://api.github.com/repos/servo/servo/pulls/10014",
+      "html_url": "https://github.com/servo/servo/pull/10014",
+      "diff_url": "https://github.com/servo/servo/pull/10014.diff",
+      "patch_url": "https://github.com/servo/servo/pull/10014.patch"
+    },
+    "body": "Adresses #9949.\r\n\r\nThis adds a function that tests whether a request should be blocked or not based on it's url's scheme and port. It also adds testing for port restriction to the `main_fetch` method. More info in https://github.com/whatwg/fetch/commit/eb07418c8383983a9887498e49a2e2e986d3c9f4.\r\n\r\n@Ms2ger In https://github.com/whatwg/html/issues/841, @annevk proposes to remove port restrictions from websockets. Should we go ahead do that, given that the spec hasn't been changed yet?\r\n\r\n<!-- Reviewable:start -->\r\n---\r\nThis change is [<img src=\"https://reviewable.io/review_button.svg\" height=\"35\" align=\"absmiddle\" alt=\"Reviewable\"/>](https://reviewable.io/reviews/servo/servo/10014)\r\n<!-- Reviewable:end -->\r\n"
+  }
+]
