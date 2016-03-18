@@ -12,5 +12,14 @@
   },
   "engines": {
     "node": "0.10.x"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "nock": "^7.2.2",
+    "sinon": "^1.17.3"
+  },
+  "scripts": {
+    "test": "mocha tests",
+    "test:watch": "mocha tests --watch"
   }
 }

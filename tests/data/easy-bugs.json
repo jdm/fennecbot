@@ -1,0 +1,225 @@
+[
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/9995",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/9995/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/9995/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/9995/events",
+    "html_url": "https://github.com/servo/servo/pull/9995",
+    "id": 140780233,
+    "number": 9995,
+    "title": "test_ref() got an unexpected keyword argument 'kind'.Fixes #9986",
+    "user": {
+      "login": "malayaleecoder",
+      "id": 16613630,
+      "avatar_url": "https://avatars.githubusercontent.com/u/16613630?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/malayaleecoder",
+      "html_url": "https://github.com/malayaleecoder",
+      "followers_url": "https://api.github.com/users/malayaleecoder/followers",
+      "following_url": "https://api.github.com/users/malayaleecoder/following{/other_user}",
+      "gists_url": "https://api.github.com/users/malayaleecoder/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/malayaleecoder/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/malayaleecoder/subscriptions",
+      "organizations_url": "https://api.github.com/users/malayaleecoder/orgs",
+      "repos_url": "https://api.github.com/users/malayaleecoder/repos",
+      "events_url": "https://api.github.com/users/malayaleecoder/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/malayaleecoder/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/S-awaiting-review",
+        "name": "S-awaiting-review",
+        "color": "d4c5f9"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": {
+      "login": "Wafflespeanut",
+      "id": 6691262,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6691262?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Wafflespeanut",
+      "html_url": "https://github.com/Wafflespeanut",
+      "followers_url": "https://api.github.com/users/Wafflespeanut/followers",
+      "following_url": "https://api.github.com/users/Wafflespeanut/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Wafflespeanut/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Wafflespeanut/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Wafflespeanut/subscriptions",
+      "organizations_url": "https://api.github.com/users/Wafflespeanut/orgs",
+      "repos_url": "https://api.github.com/users/Wafflespeanut/repos",
+      "events_url": "https://api.github.com/users/Wafflespeanut/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Wafflespeanut/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2016-03-14T19:50:20Z",
+    "updated_at": "2016-03-14T19:50:53Z",
+    "closed_at": null,
+    "pull_request": {
+      "url": "https://api.github.com/repos/servo/servo/pulls/9995",
+      "html_url": "https://github.com/servo/servo/pull/9995",
+      "diff_url": "https://github.com/servo/servo/pull/9995.diff",
+      "patch_url": "https://github.com/servo/servo/pull/9995.patch"
+    },
+    "body": "Tries to fix #9986. Please have a look.\n\n<!-- Reviewable:start -->\n---\nThis change is [<img src=\"https://reviewable.io/review_button.svg\" height=\"35\" align=\"absmiddle\" alt=\"Review on Reviewable\"/>](https://reviewable.io/reviews/servo/servo/9995)\n<!-- Reviewable:end -->\n"
+  },
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/9994",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/9994/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/9994/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/9994/events",
+    "html_url": "https://github.com/servo/servo/issues/9994",
+    "id": 140777769,
+    "number": 9994,
+    "title": "Implement HTMLTextArea.setSelectionRange",
+    "user": {
+      "login": "jdm",
+      "id": 27658,
+      "avatar_url": "https://avatars.githubusercontent.com/u/27658?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jdm",
+      "html_url": "https://github.com/jdm",
+      "followers_url": "https://api.github.com/users/jdm/followers",
+      "following_url": "https://api.github.com/users/jdm/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jdm/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jdm/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jdm/subscriptions",
+      "organizations_url": "https://api.github.com/users/jdm/orgs",
+      "repos_url": "https://api.github.com/users/jdm/repos",
+      "events_url": "https://api.github.com/users/jdm/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jdm/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/A-content/dom",
+        "name": "A-content/dom",
+        "color": "d7e102"
+      },
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/E-easy",
+        "name": "E-easy",
+        "color": "02e10c"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2016-03-14T19:41:38Z",
+    "updated_at": "2016-03-14T19:41:38Z",
+    "closed_at": null,
+    "body": "Spec: https://html.spec.whatwg.org/multipage/forms.html#textFieldSelection\r\nCode: `components/script/dom/htmtextareaelement.rs`, `components/script/dom/webidls/HTMLTextAreaElement.webidl`\r\nTest: `./mach test-wpt tests/wpt/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html`\r\n\r\nThis will be very similar to #9905 which implemented this API for `<input>` elements."
+  },
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/9993",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/9993/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/9993/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/9993/events",
+    "html_url": "https://github.com/servo/servo/issues/9993",
+    "id": 140769445,
+    "number": 9993,
+    "title": "Highlight text selection",
+    "user": {
+      "login": "SimonSapin",
+      "id": 291359,
+      "avatar_url": "https://avatars.githubusercontent.com/u/291359?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SimonSapin",
+      "html_url": "https://github.com/SimonSapin",
+      "followers_url": "https://api.github.com/users/SimonSapin/followers",
+      "following_url": "https://api.github.com/users/SimonSapin/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SimonSapin/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SimonSapin/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SimonSapin/subscriptions",
+      "organizations_url": "https://api.github.com/users/SimonSapin/orgs",
+      "repos_url": "https://api.github.com/users/SimonSapin/repos",
+      "events_url": "https://api.github.com/users/SimonSapin/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SimonSapin/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/A-browserhtml/P2",
+        "name": "A-browserhtml/P2",
+        "color": "d7e102"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "milestone": null,
+    "comments": 2,
+    "created_at": "2016-03-14T19:08:12Z",
+    "updated_at": "2016-03-14T20:14:44Z",
+    "closed_at": null,
+    "body": "We already support keyboard text selection (with Shift + arrows) in `<input>`, but it’s invisible. This issue is about changing the text color and background color of selected text, like other browsers do. Colors can be hard-coded at first, #8077 is about adding a `::selection` pseudo-element to change them with CSS.\r\n\r\nI don’t know if we’re better off splitting text fragments in layout at selection boundaries, or only splitting display items. @pcwalton, do you have an opinion on this?\r\n\r\nCC @paulrouget "
+  },
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/9992",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/9992/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/9992/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/9992/events",
+    "html_url": "https://github.com/servo/servo/issues/9992",
+    "id": 140766040,
+    "number": 9992,
+    "title": "Implement NavigatorLanguage",
+    "user": {
+      "login": "jdm",
+      "id": 27658,
+      "avatar_url": "https://avatars.githubusercontent.com/u/27658?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jdm",
+      "html_url": "https://github.com/jdm",
+      "followers_url": "https://api.github.com/users/jdm/followers",
+      "following_url": "https://api.github.com/users/jdm/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jdm/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jdm/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jdm/subscriptions",
+      "organizations_url": "https://api.github.com/users/jdm/orgs",
+      "repos_url": "https://api.github.com/users/jdm/repos",
+      "events_url": "https://api.github.com/users/jdm/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jdm/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/A-content/dom",
+        "name": "A-content/dom",
+        "color": "d7e102"
+      },
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/C-assigned",
+        "name": "C-assigned",
+        "color": "02d7e1"
+      },
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/E-easy",
+        "name": "E-easy",
+        "color": "02e10c"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "milestone": null,
+    "comments": 2,
+    "created_at": "2016-03-14T18:56:24Z",
+    "updated_at": "2016-03-14T19:32:20Z",
+    "closed_at": null,
+    "body": "Spec: https://html.spec.whatwg.org/multipage/webappapis.html#navigatorlanguage (and add `Navigator implements NavigatorLanguage;`)\r\nCode: `components/script/dom/webidls/Navigator.webidl`, `components/script/dom/navigator.rs`\r\nTests:\r\n* `./mach test-wpt tests/wpt/html/dom/interfaces.html`\r\n* `./mach test-wpt tests/wpt/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorlanguage.html`\r\n* Follow [the documentation](https://github.com/servo/servo/blob/master/tests/wpt/README.md#updating-test-expectations) to adjust for tests that now pass.\r\n\r\nThe lack of this feature is makes clicking links on Twitter break (see #9870). Let's just hardcode this as `en-US` right now."
+  }
+]

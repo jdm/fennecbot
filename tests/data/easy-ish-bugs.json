@@ -1,0 +1,53 @@
+[
+  {
+    "url": "https://api.github.com/repos/servo/servo/issues/9994",
+    "repository_url": "https://api.github.com/repos/servo/servo",
+    "labels_url": "https://api.github.com/repos/servo/servo/issues/9994/labels{/name}",
+    "comments_url": "https://api.github.com/repos/servo/servo/issues/9994/comments",
+    "events_url": "https://api.github.com/repos/servo/servo/issues/9994/events",
+    "html_url": "https://github.com/servo/servo/issues/9994",
+    "id": 140777769,
+    "number": 9994,
+    "title": "Implement HTMLTextArea.setSelectionRange",
+    "user": {
+      "login": "jdm",
+      "id": 27658,
+      "avatar_url": "https://avatars.githubusercontent.com/u/27658?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jdm",
+      "html_url": "https://github.com/jdm",
+      "followers_url": "https://api.github.com/users/jdm/followers",
+      "following_url": "https://api.github.com/users/jdm/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jdm/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jdm/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jdm/subscriptions",
+      "organizations_url": "https://api.github.com/users/jdm/orgs",
+      "repos_url": "https://api.github.com/users/jdm/repos",
+      "events_url": "https://api.github.com/users/jdm/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jdm/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/A-content/dom",
+        "name": "A-content/dom",
+        "color": "d7e102"
+      },
+      {
+        "url": "https://api.github.com/repos/servo/servo/labels/E-easy",
+        "name": "E-easy",
+        "color": "02e10c"
+      }
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2016-03-14T19:41:38Z",
+    "updated_at": "2016-03-14T19:41:38Z",
+    "closed_at": null,
+    "body": "Spec: https://html.spec.whatwg.org/multipage/forms.html#textFieldSelection\r\nCode: `components/script/dom/htmtextareaelement.rs`, `components/script/dom/webidls/HTMLTextAreaElement.webidl`\r\nTest: `./mach test-wpt tests/wpt/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html`\r\n\r\nThis will be very similar to #9905 which implemented this API for `<input>` elements."
+  }
+]
