@@ -5,9 +5,9 @@ var irc = require("irc"),
     config = require("./config"),
     storage = require('node-persist');
 
-function searchGithub(params, org, repo, callback) {
+function githubRequest(endpoint, callback) {
   var reqParams = {
-    uri: 'https://api.github.com/repos/' + org + '/' + repo + '/issues' + params,
+    uri: 'https://api.github.com/' + endpoint,
     method: 'GET',
     body: null,
     headers: {
@@ -51,6 +51,14 @@ function searchGithub(params, org, repo, callback) {
     }
     callback(error, json);
   });
+}
+
+function searchGithub(params, org, repo, callback) {
+  return githubRequest('repos/' + org + '/' + repo + '/issues' + params, callback);
+}
+
+function searchIssues(params, callback) {
+  return githubRequest('search/issues' + params, callback);
 }
 
 function choose(list) {
@@ -182,6 +190,27 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
         bot.say(to,"Please specify a nick and a message")
       }
       return;
+    }
+
+    intermittent_match = message.match(/is (.*) intermittent/);
+    if (intermittent_match) {
+        var query = intermittent_match[1];
+        var filters = ['is:open', 'user:servo', 'repo:servo', 'in:title', 'type:issue',
+                       'label:I-intermittent']
+        var search = '?q=' + query + '+' + filters.join('+');
+        searchIssues(search, function(error, issues) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          if (issues["total_count"] === 0) {
+            bot.say(to, "No intermittent issues filed with '" + query + "' in the title");
+            return;
+          }
+          issues["items"].forEach(function(item) {
+            bot.say(to, "#" + item["number"] + " - " + item["title"] + ' (' + item["html_url"] + ')');
+          });
+        });
     }
 
     review_match = message.match(/what should (.*) review/);
