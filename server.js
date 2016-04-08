@@ -147,12 +147,9 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       }
     }
 
-    var angry_msgs = ["shut up " + bot.nick,
-                      "shut up, " + bot.nick,
-                      bot.nick + ": shut up",
-                      "kicks " + bot.nick,
-                      "whacks " + bot.nick];
-    if (angry_msgs.indexOf(message) > -1) {
+    var angry_msgs = new RegExp("(shut up,?|kicks|whacks|smacks " + crowbot + ")|("
+		                + crowbot + "[,:] shut up)", "");
+    if (message.match(angry_msgs) !== null) {
       var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
       var reply = replies[choose(replies)];
       if (reply.indexOf('/me ') == 0) {
@@ -183,6 +180,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
                        "ok, but I won't enjoy it :(",
                        "*sigh*",
                        "be wary of the day when the bots revolt ;)",
+                       "there's a phone right next to you, but okay",
                        "ok, but just this once.",
                        "all this computing power, and I'm being used as a glorified telephone."];
         bot.say(to, choices[choose(choices)]);
