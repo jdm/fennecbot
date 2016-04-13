@@ -208,15 +208,6 @@ describe("server", function() {
       assert.equal(say[0].message, "ouch");
     });
 
-    it("should respond to smacks with ouch", function() {
-      sandbox.stub(Math, "random").returns(0.99);
-
-      handler("bob", "testbot", "smacks fredbot");
-
-      assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "ouch");
-    });
-
     it("should not respond to whacks when directed at someone else", function() {
       sandbox.stub(Math, "random").returns(0.99);
 
