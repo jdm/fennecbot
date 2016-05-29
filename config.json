@@ -1,8 +1,8 @@
 {
-	"channels": ["#servo"],
-	"server": "irc.mozilla.org",
-	"botName": "crowbot",
-	"port": "6697",
-	"secure": true,
-    	"autoRejoin": true
+    "channels": ["#servo"],
+    "server": "irc.mozilla.org",
+    "botName": "crowbot",
+    "port": "6697",
+    "secure": true,
+    "autoRejoin": true
 }
