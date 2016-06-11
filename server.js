@@ -3,6 +3,7 @@ var irc = require("irc"),
     request = require("request"),
     notes = require("./notes"),
     config = require("./config"),
+    newsflash = require("./newsflash"),
     storage = require('node-persist');
 
 function githubRequest(endpoint, callback) {
@@ -66,7 +67,7 @@ function choose(list) {
 }
 
 
-var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage) {
+var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash) {
   // Finds an issue that matches the search term, and says it to the person who asked about it.
   function findIssue(from, to, search, bot) {
     searchGithub(search, 'servo', 'servo', function(error, issues) {
@@ -265,6 +266,12 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    if (message.indexOf("what's new?") > -1) {
+      var rumour = newsflash.createRumour();
+      bot.say(to, rumour);
+      return;
+    }
+
     if (message.indexOf("notes") > -1) {
       var recentNotes = notes.recent(from, to);
       bot.say(to, recentNotes);
@@ -402,7 +409,7 @@ var bot = new irc.Client(config.server, config.botName, {
   autoRejoin: config.autoRejoin,
 });
 
-var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage);
+var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash);
 var pingResponder = pingResponderWrapper(pings, bot, pingStorage);
 
 bot.addListener('error', function(message) {

@@ -5,7 +5,7 @@ var assert = require("chai").assert;
 var nock = require("nock");
 
 describe("server", function() {
-  var bot, pings, say, action, searchGithub, handler, sandbox, pingStorage;
+  var bot, pings, say, action, searchGithub, handler, sandbox, pingStorage, newsflash;
 
   beforeEach(function() {
     pings = {};
@@ -19,6 +19,9 @@ describe("server", function() {
     var notes = {
       recent: function(from, to) { return "some link to notes"; }
     };
+    var newsflash = {
+      createRumour: function() { return "some rumour about Servo"; }
+    };
 
     bot = {
       nick: "fredbot",
@@ -28,7 +31,7 @@ describe("server", function() {
 
     sandbox = sinon.sandbox.create();
     searchGithub = sinon.stub();
-    handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage);
+    handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash);
   });
 
   afterEach(function () {
@@ -428,6 +431,15 @@ describe("server", function() {
 
       assert.equal(say[0].to, "testbot");
       assert.equal(say[0].message, "some link to notes");
+    });
+  });
+
+  describe("rumour", function() {
+    it("should return a random rumour", function() {
+      handler("jdm", "testbot", "fredbot: what's new?");
+
+      assert.equal(say[0].to, "testbot");
+      assert.notEqual(say[0].message.indexOf('Servo'), -1);
     });
   });
 
