@@ -103,7 +103,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     // " #123" to avoid catching html anchors
     // "#123" at the start of a line
     // "(#123)"
-    var numbers_re = /(issue\s|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
+    var numbers_re = /(issue\s|\s£|^£|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
     var numbers;
     while ((numbers = numbers_re.exec(message)) !== null) {
       searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {

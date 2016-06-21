@@ -91,6 +91,73 @@ describe("server", function() {
     });
   });
 
+  describe("handler issue number with £", function() {
+    it("should request issue when £<number> is detected", function() {
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
+
+      handler("bob", "testbot", "test string £52");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+    });
+
+    it("should request issue when £<number> is in brackets", function() {
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
+
+      handler("bob", "testbot", "test string (£52)");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+    });
+
+    it("should request issue when £<number> is first in line", function() {
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
+
+      handler("bob", "testbot", "£52 test");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+    });
+
+    it("should ignore £52 when included in url", function() {
+      handler("bob", "testbot", "http://test£52");
+
+      assert.equal(searchGithub.called, false);
+      assert.equal(say.length, 0);
+    });
+
+    it("should request multiple issues when multiple £<number> entries found", function() {
+      searchGithub.withArgs("/52").callsArgWith(3, null, require("./data/issue-52-success.json"));
+      searchGithub.withArgs("/34").callsArgWith(3, null, require("./data/issue-34-success.json"));
+
+      handler("bob", "testbot", "£52 test £34");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(searchGithub.args[1][0], "/34");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[1].to, "testbot");
+      assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
+    });
+
+    it("should request multiple issues when multiple £<number> or #<number> entries found", function() {
+      searchGithub.withArgs("/52").callsArgWith(3, null, require("./data/issue-52-success.json"));
+      searchGithub.withArgs("/34").callsArgWith(3, null, require("./data/issue-34-success.json"));
+
+      handler("bob", "testbot", "£52 test #34");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(searchGithub.args[1][0], "/34");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[1].to, "testbot");
+      assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
+    });
+});
+
   describe("handler github links to any repository", function() {
     it("should handle a single github url", function() {
       searchGithub.withArgs("/37", "servo", "crowbot").callsArgWith(3, null, require("./data/issue-crowbot-37-success.json"));
