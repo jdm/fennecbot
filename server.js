@@ -191,6 +191,53 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    //This Week in Servo
+    if (message.indexOf('twis ') > -1) {
+      var command = original_message.split(' ').splice(1);
+      var action = command[1].toLowerCase();
+
+      if (action.indexOf('add') > -1) {
+        if (command.length > 2) { 
+          var message = command.splice(2).join(' ');
+          var twisForUser = twisStorage.getItemSync(from);
+          if (!twisForUser) twisForUser = [];
+
+          twisForUser.push({"from": from, "message": message});
+
+          twisStorage.setItemSync(from, twisForUser);
+          bot.say(to, "Done and done.");
+        } else {
+          bot.say(to, "Sorry. I can't add this. Did you include what you did?");
+        }  
+      } else if (action.indexOf('list') > -1) {       //TODO maybe make it all in one message?
+          bot.say(to, "This Week in Servo!");
+          var twisForUser = twisStorage.getItemSync(from);
+
+          twisStorage.forEach(function(key, value) {
+              var twisForUser = twisStorage.getItemSync(key);
+
+              var verbs = ["accomplished",
+                           "concluded",
+                           "finished",
+                           "managed",
+                           "performed",
+                           "did",
+                           "won",
+                           "realized",
+                           "produced"];   
+
+              for (i in twisForUser) {
+                  bot.say(to, twisForUser[i].from + " " + verbs[choose(verbs)] + " " + twisForUser[i].message);
+              }
+          });
+      } else if (action.indexOf('clear') > -1) {
+          bot.say(to, from + " cleared TWiS updates");
+          twisStorage.clearSync();
+      } else {
+          bot.say(to, "You probably meant to specify add/list/clear");
+      }
+    }
+
     intermittent_match = message.match(/is (.*) intermittent/);
     if (intermittent_match) {
         var query = intermittent_match[1];
@@ -400,6 +447,27 @@ var pingStorage = {
   getItemSync: storage.getItemSync,
   setItemSync: storage.setItemSync,
   removeItemSync: storage.removeItemSync
+}
+
+storage.initSync({
+    dir:'twis',
+    stringify: JSON.stringify,
+    parse: JSON.parse,
+    encoding: 'utf8',
+    logging: false,
+    continuous: true,
+    interval: false,
+    ttl: false
+});
+
+var twis={};
+var twisStorage = {
+  getItemSync: storage.getItemSync,
+  setItemSync: storage.setItemSync,
+  removeItemSync: storage.removeItemSync,
+  clearSync: storage.clearSync,
+  forEach: storage.forEach,
+  length: storage.length
 }
 
 var bot = new irc.Client(config.server, config.botName, {
