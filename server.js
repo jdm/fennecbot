@@ -295,6 +295,11 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    if (message.indexOf("what does the fox say") > -1) {
+      findIssue(from, to, "?labels=A-stylo", bot);
+      return;
+    }
+
     if (message.indexOf("easy bug") > -1) {
       findIssue(from, to, "?labels=E-Easy", bot);
       return;
