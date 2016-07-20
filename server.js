@@ -257,6 +257,44 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    if (message.indexOf("what does the web need") > -1) {
+      var base_url = 'https://www.w3.org/Consortium/activities';
+      request(base_url, function(err, response, body) {
+        if (err || !body) {
+          var choices = ["*shrug*", "meh", "dunno", "how should i know?"];
+          bot.say(to, from + ": " + choices[choose(choices)]);
+        } else {
+          var pattern = /<h3 class="h4" id="(.*)">\s*<span title="(.*)"/g;
+          var techs = [];
+          var tech;
+          while ((tech = pattern.exec(body)) !== null) {
+            techs.push(tech);
+          }
+            console.log('found ' + techs.length + ' techs');
+          var tech = techs[choose(techs)];
+          var choices = ["the ${tech} is worth looking at",
+                         "web developers are clamouring for the ${tech}",
+                         "I hear the ${tech} will be the next big thing",
+                         "${tech} just released a new specification",
+                         "what about the newest work from the ${tech}",
+                         "servo could take the lead on the ${tech}",
+                         "I've heard good things about the ${tech}",
+                         "have you considered the ${tech} yet?",
+                         "the ${tech} is big in the embedded world",
+                         "it's a gamble, but the ${tech} could really make a difference",
+                         "servo is uniquely positioned to embrace the ${tech}",
+                         "all the browser vendors agree that it's the ${tech}?",
+                         "the ${tech} is popular in the IoT space",
+                         "start working with the ${tech} while it's just getting off the ground",
+                         "think of the possibilities the ${tech} could enable!"];
+          var saying = choices[choose(choices)];
+          var url = base_url + '#' + tech[1];
+          bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + url + ')');
+        }
+      });
+      return;
+    }
+
     if (message.indexOf("easy bug") > -1) {
       findIssue(from, to, "?labels=E-Easy", bot);
       return;
