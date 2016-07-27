@@ -197,19 +197,27 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       var action = command[1].toLowerCase();
 
       if (action.indexOf('add') > -1) {
-        if (command.length > 2) { 
+        if (command.length > 2) {
+          var user = from;
+
+          // Allow user specification with 'twis add user=jdm message'
+          if (command[2].indexOf('user') > -1) {
+            user = command[2].split('=')[1];
+            command = command.splice(1);
+          }
+
           var message = command.splice(2).join(' ');
-          var twisForUser = twisStorage.getItemSync(from);
+          var twisForUser = twisStorage.getItemSync(user);
           if (!twisForUser) twisForUser = [];
 
-          twisForUser.push({"from": from, "message": message});
+          twisForUser.push({"from": user, "message": message});
 
-          twisStorage.setItemSync(from, twisForUser);
+          twisStorage.setItemSync(user, twisForUser);
           bot.say(to, "Done and done.");
         } else {
           bot.say(to, "Sorry. I can't add this. Did you include what you did?");
         }  
-      } else if (action.indexOf('list') > -1) {       //TODO maybe make it all in one message?
+      } else if (action.indexOf('list') > -1) {
           bot.say(to, "This Week in Servo!");
           var twisForUser = twisStorage.getItemSync(from);
 
