@@ -192,6 +192,61 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    //This Week in Servo
+    if (message.indexOf('twis ') > -1) {
+      var command = original_message.split(' ').splice(1);
+      var action = command[1].toLowerCase();
+
+      if (action.indexOf('add') > -1) {
+        if (command.length > 2) {
+          var user = from;
+
+          // Allow user specification with 'twis add user=jdm message'
+          if (command[2].indexOf('user') > -1) {
+            user = command[2].split('=')[1];
+            command = command.splice(1);
+          }
+
+          var message = command.splice(2).join(' ');
+          var twisForUser = twis.getItemSync(user);
+          if (!twisForUser) twisForUser = [];
+
+          twisForUser.push({"from": user, "message": message});
+
+          twis.setItemSync(user, twisForUser);
+          bot.say(to, "Done and done.");
+        } else {
+          bot.say(to, "Sorry. I can't add this. Did you include what you did?");
+        }  
+      } else if (action.indexOf('list') > -1) {
+          bot.say(to, "This Week in Servo!");
+          var twisForUser = twis.getItemSync(from);
+
+          twis.forEach(function(key, value) {
+              var twisForUser = twis.getItemSync(key);
+
+              var verbs = ["accomplished",
+                           "concluded",
+                           "finished",
+                           "managed",
+                           "performed",
+                           "did",
+                           "won",
+                           "realized",
+                           "produced"];   
+
+              for (i in twisForUser) {
+                  bot.say(to, twisForUser[i].from + " " + verbs[choose(verbs)] + " " + twisForUser[i].message);
+              }
+          });
+      } else if (action.indexOf('clear') > -1) {
+          bot.say(to, from + " cleared TWiS updates");
+          twis.clearSync();
+      } else {
+          bot.say(to, "You probably meant to specify add/list/clear");
+      }
+    }
+
     intermittent_match = message.match(/is (.*) intermittent/);
     if (intermittent_match) {
         var query = intermittent_match[1];
@@ -419,7 +474,7 @@ var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings,
             var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
             bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
         }
-        pingStorage.removeItemSync(who);
+        pings.removeItemSync(who);
     }
   }
 }
@@ -428,7 +483,8 @@ if (module.parent) {
   return;
 }
 
-storage.initSync({
+
+var pings = storage.create({
     dir:'pings',
     stringify: JSON.stringify,
     parse: JSON.parse,
@@ -438,12 +494,35 @@ storage.initSync({
     interval: false,
     ttl: false
 });
+pings.initSync();
 
-var pings={};
+var twis = storage.create({
+    dir:'twis',
+    stringify: JSON.stringify,
+    parse: JSON.parse,
+    encoding: 'utf8',
+    logging: false,
+    continuous: true,
+    interval: false,
+    ttl: false
+});
+
+twis.initSync();
+
+//var pings={};
 var pingStorage = {
-  getItemSync: storage.getItemSync,
-  setItemSync: storage.setItemSync,
-  removeItemSync: storage.removeItemSync
+  getItemSync: pings.getItemSync,
+  setItemSync: pings.setItemSync,
+  removeItemSync: pings.removeItemSync
+}
+
+//var twis={};
+var twisStorage = {
+  getItemSync: twis.getItemSync,
+  setItemSync: twis.setItemSync,
+  removeItemSync: twis.removeItemSync,
+  clearSync: twis.clearSync,
+  forEach: twis.forEach,
 }
 
 var bot = new irc.Client(config.server, config.botName, {
