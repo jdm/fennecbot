@@ -711,4 +711,9 @@ describe("server", function() {
     });
 
   });
+
+  describe("This week in Servo", function() {
+
+
+  });
 });

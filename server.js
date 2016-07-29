@@ -207,22 +207,22 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           }
 
           var message = command.splice(2).join(' ');
-          var twisForUser = twisStorage.getItemSync(user);
+          var twisForUser = twis.getItemSync(user);
           if (!twisForUser) twisForUser = [];
 
           twisForUser.push({"from": user, "message": message});
 
-          twisStorage.setItemSync(user, twisForUser);
+          twis.setItemSync(user, twisForUser);
           bot.say(to, "Done and done.");
         } else {
           bot.say(to, "Sorry. I can't add this. Did you include what you did?");
         }  
       } else if (action.indexOf('list') > -1) {
           bot.say(to, "This Week in Servo!");
-          var twisForUser = twisStorage.getItemSync(from);
+          var twisForUser = twis.getItemSync(from);
 
-          twisStorage.forEach(function(key, value) {
-              var twisForUser = twisStorage.getItemSync(key);
+          twis.forEach(function(key, value) {
+              var twisForUser = twis.getItemSync(key);
 
               var verbs = ["accomplished",
                            "concluded",
@@ -240,7 +240,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           });
       } else if (action.indexOf('clear') > -1) {
           bot.say(to, from + " cleared TWiS updates");
-          twisStorage.clearSync();
+          twis.clearSync();
       } else {
           bot.say(to, "You probably meant to specify add/list/clear");
       }
@@ -430,7 +430,7 @@ var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings,
             var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
             bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
         }
-        pingStorage.removeItemSync(who);
+        pings.removeItemSync(who);
     }
   }
 }
@@ -439,7 +439,8 @@ if (module.parent) {
   return;
 }
 
-storage.initSync({
+
+var pings = storage.create({
     dir:'pings',
     stringify: JSON.stringify,
     parse: JSON.parse,
@@ -449,15 +450,9 @@ storage.initSync({
     interval: false,
     ttl: false
 });
+pings.initSync();
 
-var pings={};
-var pingStorage = {
-  getItemSync: storage.getItemSync,
-  setItemSync: storage.setItemSync,
-  removeItemSync: storage.removeItemSync
-}
-
-storage.initSync({
+var twis = storage.create({
     dir:'twis',
     stringify: JSON.stringify,
     parse: JSON.parse,
@@ -468,14 +463,22 @@ storage.initSync({
     ttl: false
 });
 
-var twis={};
+twis.initSync();
+
+//var pings={};
+var pingStorage = {
+  getItemSync: pings.getItemSync,
+  setItemSync: pings.setItemSync,
+  removeItemSync: pings.removeItemSync
+}
+
+//var twis={};
 var twisStorage = {
-  getItemSync: storage.getItemSync,
-  setItemSync: storage.setItemSync,
-  removeItemSync: storage.removeItemSync,
-  clearSync: storage.clearSync,
-  forEach: storage.forEach,
-  length: storage.length
+  getItemSync: twis.getItemSync,
+  setItemSync: twis.setItemSync,
+  removeItemSync: twis.removeItemSync,
+  clearSync: twis.clearSync,
+  forEach: twis.forEach,
 }
 
 var bot = new irc.Client(config.server, config.botName, {
