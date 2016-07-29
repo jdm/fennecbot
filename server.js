@@ -103,7 +103,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     // " #123" to avoid catching html anchors
     // "#123" at the start of a line
     // "(#123)"
-    var numbers_re = /(issue\s|\s£|^£|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
+    var numbers_re = /(issue\s|\s£|^£|\s*\(£|\s#|^#|\s*\(#)(\d[\d]+)(\)?)/g;
     var numbers;
     while ((numbers = numbers_re.exec(message)) !== null) {
       searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
@@ -207,22 +207,22 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           }
 
           var message = command.splice(2).join(' ');
-          var twisForUser = twis.getItemSync(user);
+          var twisForUser = twisStorage.getItemSync(user);
           if (!twisForUser) twisForUser = [];
 
           twisForUser.push({"from": user, "message": message});
 
-          twis.setItemSync(user, twisForUser);
+          twisStorage.setItemSync(user, twisForUser);
           bot.say(to, "Done and done.");
         } else {
           bot.say(to, "Sorry. I can't add this. Did you include what you did?");
         }  
       } else if (action.indexOf('list') > -1) {
           bot.say(to, "This Week in Servo!");
-          var twisForUser = twis.getItemSync(from);
+          var twisForUser = twisStorage.getItemSync(from);
 
           twis.forEach(function(key, value) {
-              var twisForUser = twis.getItemSync(key);
+              var twisForUser = twisStorage.getItemSync(key);
 
               var verbs = ["accomplished",
                            "concluded",
@@ -240,7 +240,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           });
       } else if (action.indexOf('clear') > -1) {
           bot.say(to, from + " cleared TWiS updates");
-          twis.clearSync();
+          twisStorage.clearSync();
       } else {
           bot.say(to, "You probably meant to specify add/list/clear");
       }
@@ -430,7 +430,7 @@ var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings,
             var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
             bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
         }
-        pings.removeItemSync(who);
+        pingStorage.removeItemSync(who);
     }
   }
 }
@@ -467,18 +467,18 @@ twis.initSync();
 
 //var pings={};
 var pingStorage = {
-  getItemSync: pings.getItemSync,
-  setItemSync: pings.setItemSync,
-  removeItemSync: pings.removeItemSync
+  getItemSync: storage.getItemSync.bind(pings),
+  setItemSync: storage.setItemSync.bind(pings),
+  removeItemSync: storage.removeItemSync.bind(pings)
 }
 
 //var twis={};
 var twisStorage = {
-  getItemSync: twis.getItemSync,
-  setItemSync: twis.setItemSync,
-  removeItemSync: twis.removeItemSync,
-  clearSync: twis.clearSync,
-  forEach: twis.forEach,
+  getItemSync: storage.getItemSync.bind(twis),
+  setItemSync: storage.setItemSync.bind(twis),
+  removeItemSync: storage.removeItemSync.bind(twis),
+  clearSync: storage.clearSync.bind(twis),
+  forEach: storage.forEach.bind(twis),
 }
 
 var bot = new irc.Client(config.server, config.botName, {
