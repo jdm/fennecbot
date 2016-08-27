@@ -76,7 +76,7 @@ function duration() {
         "weeks",
         "months"
     ];
-    return whole_number + ' ' + choose(units);
+    return whole_number() + ' ' + choose(units);
 }
 
 var comparison = [
