@@ -1,6 +1,4 @@
-function choose(list) {
-  return list[Math.floor(Math.random() * list.length)];
-}
+let { choose, combine, reduce, whole_number, percentage } = require("../randomtext");
 
 var opener = [
     "BREAKING NEWS:",
@@ -146,14 +144,6 @@ var negative_verb = [
     "outperformed"
 ];
 
-function whole_number() {
-    return Math.floor(Math.random() * 100);
-}
-
-function percentage() {
-    return whole_number() + "%";
-}
-
 function range_percentage() {
     var first = whole_number();
     var second = whole_number();
@@ -231,27 +221,6 @@ var ending = [
     ". Let's see if we can reproduce it!",
     ""
 ];
-
-function reduce(item) {
-    if (Array.isArray(item)) {
-        return reduce(choose(item));
-    }
-    if (typeof item === "function") {
-        return reduce(item());
-    }
-    return item;
-}
-
-function combine(list) {
-    if (!Array.isArray(list)) {
-        list = [list];
-    }
-    var combined = "";
-    for (var i = 0; i < list.length; i++) {
-        combined += reduce(list[i]) + ' ';
-    }
-    return combined.slice(0, combined.length - 1);
-}
 
 function newsflash() {
     var pattern = choose(patterns);

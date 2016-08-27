@@ -4,6 +4,7 @@ var irc = require("irc"),
     notes = require("./notes"),
     config = require("./config"),
     newsflash = require("./newsflash"),
+    opsreport = require("./opsreport"),
     storage = require('node-persist');
 
 function githubRequest(endpoint, callback) {
@@ -292,6 +293,12 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + url + ')');
         }
       });
+      return;
+    }
+
+    if (message.indexOf("infrastructure report") > -1) {
+      var rumour = opsreport.report();
+      bot.say(to, rumour);
       return;
     }
 
