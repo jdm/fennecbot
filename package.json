@@ -8,7 +8,11 @@
   "dependencies": {
     "irc": "*",
     "node-persist": "0.0.8",
-    "request": "*"
+    "request": "*",
+    "graphlib": "*",
+    "graphlib-dot": "*",
+    "graphviz2svg": "*",
+    "imgur": "*"
   },
   "engines": {
     "node": "6.2.x"

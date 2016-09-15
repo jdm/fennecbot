@@ -5,6 +5,7 @@ var irc = require("irc"),
     config = require("./config"),
     newsflash = require("./newsflash"),
     opsreport = require("./opsreport"),
+    graphs = require("./graphs"),
     storage = require('node-persist');
 
 function githubRequest(endpoint, callback) {
@@ -292,6 +293,27 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           var url = base_url + '#' + tech[1];
           bot.say(to, from + ": " + saying.replace("${tech}", tech[2].toLowerCase()) + ' (' + url + ')');
         }
+      });
+      return;
+    }
+
+    if (message.indexOf("explain") > -1) {
+      var parts = message.split(' ');
+      parts.splice(0, parts.indexOf('explain') + 1);
+      var graph = graphs.randomGraph(parts.join(' '));
+      graphs.convertGraph(graph, function(link) {
+          var text = [
+              "maybe a diagram will help - ${link}",
+              "perhaps this will clear things up: ${link}",
+              "here you go: ${link}",
+              "does ${link} help?",
+              "here you go - ${link}",
+              "all I've got is ${link}",
+              "a picture is worth a thousand words: ${link}",
+              "this should help: ${link}",
+              "${link} is old, but it's better than nothing"
+        ];
+        bot.say(to, from + ' ' + text[choose(text)].replace("${link}", link));
       });
       return;
     }
