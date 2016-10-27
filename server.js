@@ -140,7 +140,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
 
     //TODO test this
     if (message.indexOf('w3.org/tr') > -1) {
-      var allowed = ['PNG'];
+      var allowed = ['PNG', 'CSS21'];
       var found = false;
       for (var i = 0; i < allowed.length; i++) {
         found = found || (message.indexOf(allowed[i]) > -1);
