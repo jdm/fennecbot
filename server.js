@@ -300,6 +300,11 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     if (message.indexOf("explain") > -1) {
       var parts = message.split(' ');
       parts.splice(0, parts.indexOf('explain') + 1);
+
+      if (!parts.length) {
+        return;
+      }
+
       var graph = graphs.randomGraph(parts.join(' '));
       graphs.convertGraph(graph, function(link) {
           var text = [
