@@ -711,4 +711,18 @@ describe("server", function() {
     });
 
   });
+
+  describe("explain", function() {
+    it("should silently ignore empty explain requests", function() {
+      handler("bob", "fredbot", "fredbot: explain");
+
+      assert.equal(say.length, 0);
+    });
+
+    it("should silently ignore empty could you explain requests", function() {
+      handler("bob", "fredbot", "fredbot: could you explain");
+
+      assert.equal(say.length, 0);
+    });
+  });
 });
