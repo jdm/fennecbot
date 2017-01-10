@@ -100,6 +100,11 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     // Caseless message matching
     message = original_message.toLowerCase();
 
+    var issue_message = function(issue) {
+      var type = (issue.pull_request ? 'PR #' : 'Issue #');
+      return type + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
+    }
+
     // watch for:
     // issue 123
     // " #123" to avoid catching html anchors
@@ -114,7 +119,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           console.log(error);
           return;
         }
-        var message = 'Issue #' + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
+        var message = issue_message(issue);
         bot.say(to, message);
       });
     }
@@ -124,16 +129,13 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     var reviewable_re = /https:\/\/reviewable\.io\/reviews\/([\w\-]+)\/([\w\-]+)(\/)(\d+)/g;
     var issues;
     while ((issues = (issues_re.exec(message) || reviewable_re.exec(message) )) !== null) {
-    if (issues[5] && issues[5] != "/") { continue; }
-
-      var type = issues[3];
+      if (issues[5] && issues[5] != "/") { continue; }
       searchGithub("/" + issues[4], issues[1], issues[2], function(error, issue) {
         if (error) {
           console.log(error);
           return;
         }
-        var message = (type == 'pull' ? 'PR #' : 'Issue #') + issue.number +
-                      ': ' + issue.title + ' - ' + issue.html_url;
+        var message = issue_message(issue);
         bot.say(to, message);
       });
     }
