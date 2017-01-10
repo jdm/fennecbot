@@ -46,7 +46,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should request issue when #<number> is in brackets", function() {
@@ -56,7 +56,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should request issue when #<number> is first in line", function() {
@@ -66,7 +66,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should ignore #52 when included in url", function() {
@@ -85,7 +85,7 @@ describe("server", function() {
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(searchGithub.args[1][0], "/34");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
       assert.equal(say[1].to, "testbot");
       assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
     });
@@ -99,7 +99,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should request issue when £<number> is in brackets", function() {
@@ -109,7 +109,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should request issue when £<number> is first in line", function() {
@@ -119,7 +119,7 @@ describe("server", function() {
 
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
     });
 
     it("should ignore £52 when included in url", function() {
@@ -138,7 +138,7 @@ describe("server", function() {
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(searchGithub.args[1][0], "/34");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
       assert.equal(say[1].to, "testbot");
       assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
     });
@@ -152,7 +152,7 @@ describe("server", function() {
       assert.equal(searchGithub.args[0][0], "/52");
       assert.equal(searchGithub.args[1][0], "/34");
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
       assert.equal(say[1].to, "testbot");
       assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
     });
@@ -221,7 +221,7 @@ describe("server", function() {
       assert.equal(searchGithub.args[1][2], "crowbot");
 
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "Issue #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
       assert.equal(say[1].to, "testbot");
       assert.equal(say[1].message, "Issue #37: Make crowbot testable - https://github.com/servo/crowbot/issues/37");
     });
