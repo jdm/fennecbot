@@ -1,5 +1,5 @@
 {
-    "channels": ["#servo"],
+    "channels": ["#servo", "#jsapi"],
     "server": "irc.mozilla.org",
     "botName": "crowbot",
     "port": "6697",
