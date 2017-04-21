@@ -6,7 +6,9 @@ var irc = require("irc"),
     newsflash = require("./newsflash"),
     opsreport = require("./opsreport"),
     graphs = require("./graphs"),
-    storage = require('node-persist');
+    storage = require('node-persist'),
+    format = require('tz-format'),
+    moment = require('moment-timezone');
 
 function githubRequest(endpoint, callback) {
   var reqParams = {
@@ -69,7 +71,7 @@ function choose(list) {
 }
 
 
-var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash) {
+var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash, offsets) {
   // Finds an issue that matches the search term, and says it to the person who asked about it.
   function findIssue(from, to, search, bot) {
     searchGithub(search, 'servo', 'servo', function(error, issues) {
@@ -162,6 +164,25 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
         bot.say(to, reply);
       }
       return;
+    }
+
+    if (message.indexOf('what time is it') > -1) {
+      var match = message.match(/(for|in) (a-z0-9)/);
+      if (match[2] in offsets) {
+        var choices = ["rumour has it that it's {time}",
+                       "looks like it's {time}",
+                       "I'd guess {time}",
+                       "it's probably {time}",
+                       "it is precisely {time}",
+                       "{time}, give or take a few hours",
+                       "{time}, perhaps?"];
+        var dateString = format(new Date(), offsets[match[2]]);
+        var date = Date.parse(dateString);
+        var formatted = "" + date.getHours() + ':' + date.getMinutes();
+        bot.say(to, choices[choose(choices)].replace('{time}', formatted));
+      } else {
+        bot.say(to, "I don't recognize " + match[2] + ", sorry.");
+      }
     }
 
     if (message.indexOf(bot.nick) !== 0) {
@@ -482,7 +503,9 @@ var bot = new irc.Client(config.server, config.botName, {
   autoRejoin: config.autoRejoin,
 });
 
-var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash);
+var offsets = require('./utc_offsets');
+
+var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash, offsets);
 var pingResponder = pingResponderWrapper(pings, bot, pingStorage);
 
 bot.addListener('error', function(message) {

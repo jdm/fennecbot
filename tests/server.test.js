@@ -29,9 +29,13 @@ describe("server", function() {
       action: function(to, message) { action.push({ to: to, message: message }); }
     };
 
+    offsets = {
+      "jdm": +5.5,
+    };
+
     sandbox = sinon.sandbox.create();
     searchGithub = sinon.stub();
-    handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash);
+    handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash, offsets);
   });
 
   afterEach(function () {

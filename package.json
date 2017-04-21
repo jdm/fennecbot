@@ -12,7 +12,9 @@
     "graphlib": "*",
     "graphlib-dot": "*",
     "graphviz2svg": "*",
-    "imgur": "*"
+    "imgur": "*",
+    "tz-format": "*",
+    "moment-timezone": "*"
   },
   "engines": {
     "node": "6.2.x"
