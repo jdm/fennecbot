@@ -178,7 +178,12 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
         var pingsForUser = pingStorage.getItemSync(pingee);
         if (!pingsForUser) pingsForUser = [];
 
-        pingsForUser.push({"from": from, "message": command[2], "silent": (message.indexOf("silentping") > -1)});
+        pingsForUser.push({
+            "from": from,
+            "message": command[2],
+            "silent": (message.indexOf("silentping") > -1),
+            "channel": to
+        });
         pingStorage.setItemSync(pingee, pingsForUser);
         var choices = ["you got it!",
                        "you bet!",
@@ -445,17 +450,27 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
 var pingResponderWrapper = module.exports.pingResponderWrapper = function(pings, bot, pingStorage) {
   return function pingResponder(channel, who) {
     who = who.toLowerCase();
-    var pingsForUser = pingStorage.getItemSync(who);
-    if (pingsForUser) {
-        var to = channel;
-        if (pingsForUser.length > 5){
-            to = who; // Avoid spam, PM if there are a lot of  pings
-        }
-        for (i in pingsForUser) {
-            var tempto = pingsForUser[i].silent ? who : to; // For messages marked "silent"
-            bot.say(tempto, who + ": " + pingsForUser[i].from + " said " + pingsForUser[i].message);
-        }
-        pingStorage.removeItemSync(who);
+    var allPingsForUser = pingStorage.getItemSync(who);
+    if (!allPingsForUser) {
+        return;
+    }
+    var pingsForUserInChannel = allPingsForUser.filter(function(ping) {
+        return ping.channel == channel;
+    });
+    var to = channel;
+    if (pingsForUserInChannel.length > 5){
+        to = who; // Avoid spam, PM if there are a lot of pings
+    }
+    for (ping of pingsForUserInChannel) {
+        var tempto = ping.silent ? who : to; // For messages marked "silent"
+        bot.say(tempto, who + ": " + ping.from + " said " + ping.message);
+    }
+    pingStorage.removeItemSync(who);
+    remainingPings = allPingsForUser.filter(function(ping) {
+        return ping.channel != channel;
+    });
+    if (remainingPings.length) {
+        pingStorage.setItemSync(who, remainingPings);
     }
   }
 }
