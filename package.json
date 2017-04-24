@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "irc": "*",
-    "node-persist": "0.0.8",
+    "node-persist": "2.0.10",
     "request": "*",
     "graphlib": "*",
     "graphlib-dot": "*",

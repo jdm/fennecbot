@@ -325,6 +325,7 @@ describe("server", function() {
       assert.equal(say[0].message, "you got it!");
 
       var ping = pings['mark'][0];
+      assert.equal(ping.channel, 'testbot');
       assert.equal(ping.from, 'bob');
       assert.equal(ping.message, 'a message');
       assert.equal(ping.silent, false);
@@ -333,7 +334,7 @@ describe("server", function() {
     it("should append pingee to ping list when one already exists", function() {
       sandbox.stub(Math, "random").returns(0.1);
 
-      pings['mark'] = [ { from: 'old', message: 'yep', silent: false }];
+      pings['mark'] = [ { from: 'old', message: 'yep', silent: false, 'channel': 'testbot' }];
 
       handler("bob", "testbot", "fredbot: ping mark a message");
 
@@ -341,6 +342,7 @@ describe("server", function() {
       assert.equal(say[0].message, "you got it!");
 
       var ping = pings['mark'][1];
+      assert.equal(ping.channel, 'testbot');
       assert.equal(ping.from, 'bob');
       assert.equal(ping.message, 'a message');
       assert.equal(ping.silent, false);
@@ -355,6 +357,7 @@ describe("server", function() {
       assert.equal(say[0].message, "you got it!");
 
       var ping = pings['mark'][0];
+      assert.equal(ping.channel, 'testbot');
       assert.equal(ping.from, 'bob');
       assert.equal(ping.message, 'a message');
       assert.equal(ping.silent, false);
@@ -369,6 +372,7 @@ describe("server", function() {
       assert.equal(say[0].message, "you got it!");
 
       var ping = pings['mark'][0];
+      assert.equal(ping.channel, 'testbot');
       assert.equal(ping.from, 'bob');
       assert.equal(ping.message, 'a message');
       assert.equal(ping.silent, true);
@@ -659,7 +663,7 @@ describe("server", function() {
     });
 
     it("should ping if in pings list", function() {
-      pings["mark"] = [ { from: "old", message: "yep", silent: false }];
+      pings["mark"] = [ { from: "old", message: "yep", silent: false, channel: "testbot" }];
 
       pingResponder("testbot", "mark");
 
@@ -669,8 +673,8 @@ describe("server", function() {
 
     it("should ping if in pings list multiple times", function() {
       pings["mark"] = [
-        { from: "old", message: "yep", silent: false },
-        { from: "trevor", message: "woop", silent: false }
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "trevor", message: "woop", silent: false, channel: "testbot" }
       ];
 
       pingResponder("testbot", "mark");
@@ -683,8 +687,8 @@ describe("server", function() {
 
     it("should say nothing if not in the list", function() {
       pings["mark"] = [
-        { from: "old", message: "yep", silent: false },
-        { from: "trevor", message: "woop", silent: false }
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "trevor", message: "woop", silent: false, channel: "testbot" }
       ];
 
       pingResponder("testbot", "tom");
@@ -692,14 +696,28 @@ describe("server", function() {
       assert.equal(say.length, 0);
     });
 
+    it("should send only notifications from the same channel", function() {
+      pings["mark"] = [
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "old", message: "yep2", silent: false, channel: "testbot2" }
+      ];
+
+      pingResponder("testbot", "mark");
+
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "mark: old said yep");
+      assert.equal(say.length, 1);
+      assert.equal(pings["mark"].length, 1);
+    });
+
     it("should send a private message if lots of mentions", function() {
       pings["mark"] = [
-        { from: "old", message: "yep", silent: false },
-        { from: "old", message: "yep", silent: false },
-        { from: "old", message: "yep", silent: false },
-        { from: "old", message: "yep", silent: false },
-        { from: "old", message: "yep", silent: false },
-        { from: "trevor", message: "woop", silent: false }
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "old", message: "yep", silent: false, channel: "testbot" },
+        { from: "trevor", message: "woop", silent: false, channel: "testbot" }
       ];
 
       pingResponder("testbot", "mark");
