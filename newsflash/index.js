@@ -48,7 +48,7 @@ var competitor = [
     "Lynx",
     "Links",
     "SeaMonkey",
-    "WeaseyPrint",
+    "WeasyPrint",
     "Dillo",
     "Midori",
     "NetSurf",
