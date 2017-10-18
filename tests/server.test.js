@@ -179,7 +179,7 @@ describe("server", function() {
 
       assert.equal(say.length, 0);
     });
-    
+
     it("should handle a single reviewable url", function() {
       searchGithub.withArgs("/37", "servo", "crowbot").callsArgWith(3, null, require("./data/issue-crowbot-37-success.json"));
 
@@ -528,7 +528,7 @@ describe("server", function() {
       handler("jdm", "testbot", "fredbot: source");
 
       assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "jdm: https://github.com/jdm/fennecbot");
+      assert.equal(say[0].message, "jdm: https://github.com/servo/crowbot");
     });
   });
 
