@@ -6,7 +6,8 @@ var irc = require("irc"),
     newsflash = require("./newsflash"),
     opsreport = require("./opsreport"),
     graphs = require("./graphs"),
-    storage = require('node-persist');
+    storage = require('node-persist'),
+    homu = require("./homu");
 
 function githubRequest(endpoint, callback) {
   var reqParams = {
@@ -514,3 +515,11 @@ bot.addListener("message", handler);
 bot.addListener("action", handler);
 // Listener for the autopinger
 bot.addListener("join", pingResponder);
+
+const THIRTY_MINUTES = 30 * 60 * 1000;
+setInterval(function() {
+    checkHomuQueue(function(queued) {
+        bot.say(config.channels[0],
+                "Warning! All builders are idle, but there are " + queued + "PRs in the queue.");
+    });
+}, THIRTY_MINUTES);
