@@ -530,6 +530,6 @@ const THIRTY_MINUTES = 30 * 60 * 1000;
 setInterval(function() {
     homu.checkHomuQueue(function(queued) {
         bot.say(config.channels[0],
-                "Warning! All builders are idle, but there are " + queued + "PRs in the queue.");
+                "Warning! All builders are idle, but there are " + queued + " PRs in the queue.");
     });
 }, THIRTY_MINUTES);
