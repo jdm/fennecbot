@@ -386,6 +386,16 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
+    if (message.indexOf("queue status") > -1) {
+        homu.queueLength(function(numPending, numApproved) {
+            var msg = "there are " + numApproved + " PRs in the queue";
+            if (numPending) {
+                msg += " and " + numPending + " PRs being built at the moment"
+            }
+            bot.say(to, msg);
+        });
+    }
+
     if (message.indexOf('what prs need a reviewer') > -1) {
       searchGithub('?assignee=none&labels=S-awaiting-review', 'servo', 'servo', function(error, issues) {
         if (error) {
@@ -518,7 +528,7 @@ bot.addListener("join", pingResponder);
 
 const THIRTY_MINUTES = 30 * 60 * 1000;
 setInterval(function() {
-    checkHomuQueue(function(queued) {
+    homu.checkHomuQueue(function(queued) {
         bot.say(config.channels[0],
                 "Warning! All builders are idle, but there are " + queued + "PRs in the queue.");
     });

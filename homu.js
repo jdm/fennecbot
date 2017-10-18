@@ -11,13 +11,20 @@ function checkHomuQueue(cb) {
             }
         }
         // Next see if homu thinks that any PRs are ready to be built.
-        retrieveHomuQueue(function(body) {
-            var numApproved = (body.match(/<td class="approved">/g) || []).length;
-            if (numApproved) {
+        queueLength(function(numPending, numApproved) {
+            if (!numPending && numApproved) {
                 cb(numApproved);
             }
         });
     })
+}
+
+function queueLength(cb) {
+    retrieveHomuQueue(function(body) {
+        var numPending = (body.match(/<td class="pending">/g) || []).length;
+        var numApproved = (body.match(/<td class="approved">/g) || []).length;
+        cb(numPending, numApproved);
+    });
 }
 
 function retrieveHomuQueue(cb) {
@@ -37,3 +44,4 @@ function retrieveBuildbotBuilders(cb) {
 }
 
 exports.checkHomuQueue = checkHomuQueue;
+exports.queueLength = queueLength;
