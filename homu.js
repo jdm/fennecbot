@@ -12,7 +12,7 @@ function checkHomuQueue(cb) {
         }
         // Next see if homu thinks that any PRs are ready to be built.
         queueLength(function(numPending, numApproved) {
-            if (!numPending && numApproved) {
+            if (numApproved) {
                 cb(numApproved);
             }
         });
