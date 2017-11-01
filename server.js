@@ -370,7 +370,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     }
 
     if (message.indexOf("source") > -1) {
-      bot.say(to, from + ": https://github.com/jdm/fennecbot");
+      bot.say(to, from + ": https://github.com/servo/crowbot");
       return;
     }
 
@@ -416,8 +416,8 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       // github API has the key since, but this unfortunately does the opposite than what is needed
       // what follows "hopes" that in the returned results there is some issue that was last updated
       // at most 14 days before the call...
-      var searchPreamble = '?assignee=none&sort=updated&direction=desc&labels=C-assigned'; 
-      
+      var searchPreamble = '?assignee=none&sort=updated&direction=desc&labels=C-assigned';
+
       searchGithub(searchPreamble + '&labels=E-easy', 'servo', 'servo', function(error, issuesE) {
         if (error) {
           console.log(error);
@@ -431,7 +431,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
           }
 
           var today = new Date();
-          var lastUpdated = function(issue) { 
+          var lastUpdated = function(issue) {
             var updated_at = new Date(issue.updated_at);
             var ms = today - updated_at;
             var days = Math.round(ms / 86400000);
