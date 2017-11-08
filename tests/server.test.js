@@ -3,6 +3,16 @@ var pingResponderWrapper = require("../server").pingResponderWrapper;
 var sinon = require("sinon");
 var assert = require("chai").assert;
 var nock = require("nock");
+var homu = require("../homu");
+
+describe("processing builder json", function() {
+    it("should not find any builders", function() {
+        builders = require("./build.servo.org.json");
+        assert.equal(homu._anyBuildersBuilding(builders), false);
+        builders["android"]["currentBuilds"] = [1];
+        assert.equal(homu._anyBuildersBuilding(builders), true);
+    });
+});
 
 describe("server", function() {
   var bot, pings, say, action, searchGithub, handler, sandbox, pingStorage, newsflash;

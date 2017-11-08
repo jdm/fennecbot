@@ -1,19 +1,25 @@
 var request = require("request");
 
+function anyBuildersBuilding(builders) {
+    for (var builder in builders) {
+        var builderData = builders[builder];
+        if ('currentBuilds' in builderData && builderData['currentBuilds'].length) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function checkHomuQueue(cb) {
     // First check if any buildbot builders report an ongoing build.
     retrieveBuildbotBuilders(function(builders) {
-        var allIdle = true;
-        for (var builder in data) {
-            var builderData = data[builder];
-            if ('currentBuilds' in builderData && builderData['currentBuilds'].length) {
-                return;
-            }
+        if (anyBuildersBuilding(builders)) {
+            return;
         }
         // Next see if homu thinks that any PRs are ready to be built.
         queueLength(function(numPending, numApproved) {
             if (numApproved) {
-                cb(numApproved);
+                cb(numPending + numApproved);
             }
         });
     })
@@ -45,3 +51,4 @@ function retrieveBuildbotBuilders(cb) {
 
 exports.checkHomuQueue = checkHomuQueue;
 exports.queueLength = queueLength;
+exports._anyBuildersBuilding = anyBuildersBuilding;
