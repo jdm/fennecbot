@@ -34,7 +34,7 @@ function queueLength(cb) {
 }
 
 function retrieveHomuQueue(cb) {
-    request("http://servo-master.servo.org:54856/queue/servo", function(err, response, body) {
+    request("http://build.servo.org/homu/queue/servo", function(err, response, body) {
         if (!err && response.statusCode >= 200 && response.statusCode < 300) {
             cb(body);
         }
