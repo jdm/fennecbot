@@ -49,6 +49,15 @@ function retrieveBuildbotBuilders(cb) {
     });
 }
 
+function retrieveSlaves(cb) {
+    request("http://build.servo.org/json/slaves/", function(err, response, body) {
+        if (!err && response.statusCode >= 200 && response.statusCode < 300) {
+            cb(JSON.parse(body));
+        }
+    });
+}
+
 exports.checkHomuQueue = checkHomuQueue;
 exports.queueLength = queueLength;
 exports._anyBuildersBuilding = anyBuildersBuilding;
+exports.retrieveSlaves = retrieveSlaves;
