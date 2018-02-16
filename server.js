@@ -534,20 +534,16 @@ setInterval(function() {
     });
 }, THIRTY_MINUTES);
 
-const ONE_MINUTE = 1 * 60 * 1000;
 setInterval(function() {
     homu.retrieveSlaves(function(slaves) {
 		for(var slaveName in slaves){
 		    if(slaves[slaveName].hasOwnProperty("runningBuilds")){
 		        slaves[slaveName]["runningBuilds"].forEach(function(runningBuild){
 		            if(runningBuild.eta > .5){
-		                console.log(slaveName + " is past overdue! (ETA=" + runningBuild.eta + ")");
-		            } else{
-					    bot.say(config.channels[0], "/sound test.wav");	
-                        console.log("Playing sound"); 
-					}   
+		                bot.say(config.channels[0], slaveName + " is past overdue! (ETA=" + runningBuild.eta + ")");
+		            }
 		        }); 
 		    };  
 		};
     });
-}, ONE_MINUTE);
+}, THIRTY_MINUTES);
