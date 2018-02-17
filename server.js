@@ -7,7 +7,8 @@ var irc = require("irc"),
     opsreport = require("./opsreport"),
     graphs = require("./graphs"),
     storage = require('node-persist'),
-    homu = require("./homu");
+    homu = require("./homu"),
+    moment = require("moment");
 
 function githubRequest(endpoint, callback) {
   var reqParams = {
@@ -155,7 +156,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     }
 
     var angry_msgs = new RegExp("((shut up,?|kicks|whacks|smacks) " + bot.nick + ")|("
-		                + bot.nick + "[,:] shut up)", "");
+                        + bot.nick + "[,:] shut up)", "");
     if (message.match(angry_msgs) !== null) {
       var replies = ["/me is sad", ":(", "ok :(", ";_;", "sadface", "/me cries a bit", "ouch"];
       var reply = replies[choose(replies)];
@@ -535,15 +536,18 @@ setInterval(function() {
 }, THIRTY_MINUTES);
 
 setInterval(function() {
-    homu.retrieveSlaves(function(slaves) {
-		for(var slaveName in slaves){
-		    if(slaves[slaveName].hasOwnProperty("runningBuilds")){
-		        slaves[slaveName]["runningBuilds"].forEach(function(runningBuild){
-		            if(runningBuild.eta > .5){
-		                bot.say(config.channels[0], slaveName + " is past overdue! (ETA=" + runningBuild.eta + ")");
-		            }
-		        }); 
-		    };  
-		};
+    homu.retrieveSlaves(function(slaves){
+        for(var slaveName in slaves){
+            if (!("runningBuilds" in slaves[slaveName])){
+                continue;
+            }
+            slaves[slaveName].runningBuilds.forEach(function(runningBuild){
+                if(runningBuild.eta > .5){
+                    bot.say(config.channels[0], 
+                            slaveName + " is past overdue! (build started " 
+                            + moment.unix(runningBuild.currentStep.times[0]).fromNow() + ")");
+                }
+            });
+        }
     });
 }, THIRTY_MINUTES);
