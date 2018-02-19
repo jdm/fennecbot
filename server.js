@@ -544,7 +544,7 @@ setInterval(function() {
             slaves[slaveName].runningBuilds.forEach(function(runningBuild){
                 if(runningBuild.eta > .5){
                     bot.say(config.channels[0], 
-                            slaveName + " is past overdue! (build started " 
+                            slaveName + " is overdue! (build started " 
                             + moment.unix(runningBuild.currentStep.times[0]).fromNow() + ")");
                 }
             });
