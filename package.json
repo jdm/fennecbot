@@ -6,13 +6,14 @@
     "url": "https://github.com/leibovic/fennecbot"
   },
   "dependencies": {
-    "irc": "*",
-    "node-persist": "2.0.10",
-    "request": "*",
     "graphlib": "*",
     "graphlib-dot": "*",
     "graphviz2svg": "*",
-    "imgur": "*"
+    "imgur": "*",
+    "irc": "*",
+    "moment": "^2.20.1",
+    "node-persist": "2.0.10",
+    "request": "*"
   },
   "engines": {
     "node": "6.2.x"
