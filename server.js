@@ -537,12 +537,13 @@ setInterval(function() {
 
 setInterval(function() {
     homu.retrieveSlaves(function(slaves){
+        var unixNow = moment().unix()
         for(var slaveName in slaves){
             if (!("runningBuilds" in slaves[slaveName])){
                 continue;
             }
             slaves[slaveName].runningBuilds.forEach(function(runningBuild){
-                if(runningBuild.eta > .5){
+                if(unixNow - runningBuild.currentStep.times[0] > 90 * 60){
                     bot.say(config.channels[0], 
                             slaveName + " is overdue! (build started " 
                             + moment.unix(runningBuild.currentStep.times[0]).fromNow() + ")");
