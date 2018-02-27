@@ -456,6 +456,23 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       });
       return;
     }
+
+    if (message.indexOf('watch queue') > -1) {
+      if (!queueWatchers.includes(from)) {
+        queueWatchers.push(from);
+      }
+
+      bot.say(to, `i'll let you know when the queue is ready for you ${from}`);
+    }
+
+    if (message.indexOf('stop watching queue') > -1) {
+      const nickNameIndex = queueWatchers.indexOf(from);
+      if (nickNameIndex > -1) {
+        queueWatchers.splice(nickNameIndex, 1);
+      }
+
+      bot.say(to, `${from} you're off the queue`);
+    }
   }
 }
 
@@ -544,7 +561,7 @@ setInterval(function() {
             }
             slaves[slaveName].runningBuilds.forEach(function(runningBuild){
                 if(unixNow - runningBuild.currentStep.times[0] > 90 * 60){
-                    bot.say(config.channels[0], 
+                    bot.say(config.channels[0],
                             slaveName + " is overdue! (build started " 
                             + moment.unix(runningBuild.currentStep.times[0]).fromNow() + ")");
                 }
@@ -552,3 +569,17 @@ setInterval(function() {
         }
     });
 }, THIRTY_MINUTES);
+
+const queueWatchers = [];
+const TEN_MINUTES = 10 * 60 * 1000;
+setInterval(function() {
+  if (queueWatchers.length) {
+    homu.retrieveBuildbotBuilders(function(builders) {
+      if (!homu._anyBuildersBuilding(builders)) {
+          queueWatchers.forEach(function(watcher) {
+            bot.say(watcher, "The queue is idle!");
+          });
+      }
+    });
+  }
+}, TEN_MINUTES);

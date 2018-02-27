@@ -61,3 +61,4 @@ exports.checkHomuQueue = checkHomuQueue;
 exports.queueLength = queueLength;
 exports._anyBuildersBuilding = anyBuildersBuilding;
 exports.retrieveSlaves = retrieveSlaves;
+exports.retrieveBuildbotBuilders = retrieveBuildbotBuilders;
