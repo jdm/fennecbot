@@ -169,7 +169,12 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
     }
 
     if (message.indexOf(bot.nick) !== 0) {
-      return;
+      // Handle private messages
+      if (to == bot.nick) {
+        to = from;
+      } else {
+        return;
+      }
     }
 
     if (message.indexOf('ping ') > -1 || message.indexOf('tell ') > -1) {
