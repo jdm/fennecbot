@@ -12,6 +12,7 @@
     "imgur": "*",
     "irc": "*",
     "moment": "^2.20.1",
+    "nickserv": "^0.4.4",
     "node-persist": "2.0.10",
     "request": "*"
   },

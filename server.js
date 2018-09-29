@@ -8,7 +8,8 @@ var irc = require("irc"),
     graphs = require("./graphs"),
     storage = require('node-persist'),
     homu = require("./homu"),
-    moment = require("moment");
+    moment = require("moment"),
+    Nickserv = require("nickserv");
 
 function githubRequest(endpoint, callback) {
   var reqParams = {
@@ -71,7 +72,7 @@ function choose(list) {
 }
 
 
-var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash) {
+var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash, nickserv, nickservListener) {
   // Finds an issue that matches the search term, and says it to the person who asked about it.
   function findIssue(from, to, search, bot) {
     searchGithub(search, 'servo', 'servo', function(error, issues) {
@@ -166,6 +167,35 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
         bot.say(to, reply);
       }
       return;
+    }
+
+
+    if (message.indexOf('standups:') == 0) {
+        nickservListener.names.push(from);
+        nickservListener.callbacks.push([
+            function(bot, channel, name) {
+                form = {
+                    secret: process.env.STANDUPS_SECRET,
+                    user: name,
+                    message: message.replace('standups:', '').replace(bot.nick + ':', '').trim()
+                };
+                request.post(
+                    {url: 'https://build.servo.org/standups/record', form: form},
+                    function(err, response) {
+                        if (err || response.statusCode != 204) {
+                            bot.say(channel, "Error submitting status update.");
+                        } else {
+                            bot.say(channel, "Status submitted successfully.");
+                        }
+                    }
+                );
+            }.bind(null, bot, to, from),
+            function(bot, channel, name) {
+                console.log("error");
+                bot.say(channel, name + ": Your current nickname is not authorized.");
+            }.bind(null, bot, to, from)
+        ]);
+        nickserv.send("status " + from);
     }
 
     if (message.indexOf(bot.nick) !== 0) {
@@ -538,7 +568,33 @@ var bot = new irc.Client(config.server, config.botName, {
   autoRejoin: config.autoRejoin,
 });
 
-var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash);
+var nickserv = new Nickserv(config.botName);
+nickserv.attach('irc', bot);
+
+let nickservListener = {
+    names: [],
+    callbacks: [],
+    listener: function(notice) {
+        if (notice.indexOf("STATUS") != 0) {
+            return;
+        }
+        let parts = notice.split(' ');
+        let index = nickservListener.names.indexOf(parts[1]);
+        if (index == -1) {
+            return;
+        }
+        let name = nickservListener.names.splice(index, 1);
+        let callback = nickservListener.callbacks.splice(index, 1)[0];
+        if (parseInt(parts[2]) != 3) {
+            callback[1]();
+        } else {
+            callback[0]();
+        }
+    }
+};
+nickserv.addListener('notice', nickservListener.listener);
+
+var handler = handlerWrapper(pings, bot, searchGithub, notes, pingStorage, newsflash, nickserv, nickservListener);
 var pingResponder = pingResponderWrapper(pings, bot, pingStorage);
 
 bot.addListener('error', function(message) {
