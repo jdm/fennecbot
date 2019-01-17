@@ -97,7 +97,7 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
   }
 
   return function handler(from, to, original_message) {
-    if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/)) {
+    if (from == 'ghservo' || from.match(/crowbot/) || from.match(/rustbot/) || from == 'BitBot') {
       return;
     }
     // Caseless message matching
