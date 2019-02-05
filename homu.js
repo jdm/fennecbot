@@ -1,5 +1,18 @@
 var request = require("request");
 
+function currentBuildCount(cb) {
+    retrieveBuildbotBuilders(function(builders) {
+        let count = 0;
+        for (var builder in builders) {
+            var builderData = builders[builder];
+            if ('currentBuilds' in builderData) {
+                count += builderData['currentBuilds'].length;
+            }
+        }
+        cb(count);
+    })
+}
+
 function anyBuildersBuilding(builders) {
     for (var builder in builders) {
         var builderData = builders[builder];
@@ -62,3 +75,4 @@ exports.queueLength = queueLength;
 exports._anyBuildersBuilding = anyBuildersBuilding;
 exports.retrieveSlaves = retrieveSlaves;
 exports.retrieveBuildbotBuilders = retrieveBuildbotBuilders;
+exports.currentBuildCount = currentBuildCount;

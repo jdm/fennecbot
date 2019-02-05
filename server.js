@@ -8,6 +8,7 @@ var irc = require("irc"),
     graphs = require("./graphs"),
     storage = require('node-persist'),
     homu = require("./homu"),
+    taskcluster = require("./taskcluster"),
     moment = require("moment"),
     Nickserv = require("nickserv");
 
@@ -400,11 +401,6 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return;
     }
 
-    if (message.indexOf("build") > -1) {
-      bot.say(to, from + ": Try looking at our readme: https://github.com/servo/servo/#prerequisites");
-      return;
-    }
-
     if (message.indexOf("source") > -1) {
       bot.say(to, from + ": https://github.com/servo/crowbot");
       return;
@@ -429,6 +425,15 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
                 msg += " and " + numPending + " PRs being built at the moment"
             }
             bot.say(to, msg);
+        });
+    }
+
+    if (message.indexOf("how many builds are running") > -1) {
+        taskcluster.currentRunningJobs(function(numRunningJobs) {
+            homu.currentBuildCount(function(numCurrentBuilds) {
+                bot.say(to, "There are " + numRunningJobs + " taskcluster builds " +
+                        "and " + numCurrentBuilds + " buildbot builds running.");
+            });
         });
     }
 
@@ -608,8 +613,13 @@ bot.addListener("join", pingResponder);
 const THIRTY_MINUTES = 30 * 60 * 1000;
 setInterval(function() {
     homu.checkHomuQueue(function(queued) {
-        bot.say(config.channels[0],
-                "Warning! All builders are idle, but there are " + queued + " PRs in the queue.");
+        taskcluster.currentRunningJobs(function(numRunning) {
+            if (numRunning > 0) {
+                return;
+            }
+            bot.say(config.channels[0],
+                    "Warning! All builders are idle, but there are " + queued + " PRs in the queue.");
+        });
     });
 }, THIRTY_MINUTES);
 
