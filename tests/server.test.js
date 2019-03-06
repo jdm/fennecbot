@@ -534,15 +534,6 @@ describe("server", function() {
     });
   });
 
-  describe("build", function() {
-    it("should return build readme link", function() {
-      handler("jdm", "testbot", "fredbot: build");
-
-      assert.equal(say[0].to, "testbot");
-      assert.equal(say[0].message, "jdm: Try looking at our readme: https://github.com/servo/servo/#prerequisites");
-    });
-  });
-
   describe("source", function() {
     it("should return source link", function() {
       handler("jdm", "testbot", "fredbot: source");
