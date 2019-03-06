@@ -99,6 +99,16 @@ describe("server", function() {
       assert.equal(say[1].to, "testbot");
       assert.equal(say[1].message, "Issue #34: make clean iloops cleaning mozjs - https://github.com/servo/servo/issues/34");
     });
+
+    it("should request issue when org/repo#<number> is detected", function() {
+      searchGithub.callsArgWith(3, null, require("./data/issue-52-success.json"));
+
+      handler("bob", "testbot", "test string org/repo#52");
+
+      assert.equal(searchGithub.args[0][0], "/52");
+      assert.equal(say[0].to, "testbot");
+      assert.equal(say[0].message, "PR #52: Add MacPorts instructions/required ports/workarounds - https://github.com/servo/servo/pull/52");
+    });
   });
 
   describe("handler issue number with £", function() {

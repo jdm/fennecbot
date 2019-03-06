@@ -109,16 +109,24 @@ var handlerWrapper = module.exports.handlerWrapper = function handlerWrapper(pin
       return type + issue.number + ': ' + issue.title + ' - ' + issue.html_url;
     }
 
-    // watch for:
-    // issue 123
-    // " #123" to avoid catching html anchors
-    // "#123" at the start of a line
-    // "(#123)"
-    // "£123" etc. (for British keyboards)
-    var numbers_re = /(issue\s|\s[#£]|^[#£]|\s*\([#£])(\d[\d]+)(\)?)/g;
+    // The regular expression below matches the following styles:
+    // - "issue 123"
+    // - " #123" to avoid catching html anchors
+    // - "#123" at the start of a line
+    // - "(#123"
+    // - "org/repo#123"
+    //
+    // Note that, in all of the above, the "#" can be substituted with
+    // "£" (for British keyboards)
+    var numbers_re = /(issue\s|\s[#£]|^[#£]|\([#£]|([A-Za-z0-9.-]+)\/([A-Za-z0-9.-]+)[#£])(\d[\d]+)/g;
     var numbers;
     while ((numbers = numbers_re.exec(message)) !== null) {
-      searchGithub("/" + numbers[2], 'servo', 'servo', function(error, issue) {
+      // Extract the details from the message
+      var org = numbers[2] || 'servo';
+      var repo = numbers[3] || 'servo';
+      var issue_number = numbers[4];
+
+      searchGithub("/" + issue_number, org, repo, function(error, issue) {
         if (error) {
           console.log(error);
           return;
@@ -633,7 +641,7 @@ setInterval(function() {
             slaves[slaveName].runningBuilds.forEach(function(runningBuild){
                 if(unixNow - runningBuild.currentStep.times[0] > 90 * 60){
                     bot.say(config.channels[0],
-                            slaveName + " is overdue! (build started " 
+                            slaveName + " is overdue! (build started "
                             + moment.unix(runningBuild.currentStep.times[0]).fromNow() + ")");
                 }
             });
